@@ -8,8 +8,16 @@ public class Database {
     private final String username = "postgres";
     private final String password = "postgres";
 
+    protected static final String getMainData = "SELECT * FROM server_info";
+
+    private Connection DBconnection = null;
+
+    /*
+    public Database(){
+        connect();
+    }
+    */
     public Connection connect(){
-        Connection DBconnection = null;
 
         try {
             //Connects to database using ^^ parameters
@@ -22,5 +30,15 @@ public class Database {
         return DBconnection;
     }
 
+    public void disconnect(){
+        try {
+            this.DBconnection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public Connection getDBconnection() {
+        return DBconnection;
+    }
 }

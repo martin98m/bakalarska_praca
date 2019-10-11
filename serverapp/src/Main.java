@@ -1,6 +1,4 @@
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Main {
@@ -11,7 +9,7 @@ public class Main {
     private String cpuUsage = "wmic cpu get loadpercentage";
 
     public static void main(String[] args) {
-	// write your code here
+
         Database database = new Database();
 
         Connection c = database.connect();

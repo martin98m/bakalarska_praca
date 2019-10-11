@@ -9,14 +9,10 @@ public class Database {
     private final String password = "postgres";
 
     protected static final String getMainData = "SELECT * FROM server_info";
+    protected static final String insertData = "INSERT INTO server_info VALUES (?,?,?,?,?)";
 
     private Connection DBconnection = null;
 
-    /*
-    public Database(){
-        connect();
-    }
-    */
     public Connection connect(){
 
         try {

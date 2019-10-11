@@ -9,16 +9,17 @@ public class Database {
     private final String password = "postgres";
 
     public Connection connect(){
-        Connection conn = null;
+        Connection DBconnection = null;
 
         try {
-            conn = DriverManager.getConnection(url,username,password);
+            //Connects to database using ^^ parameters
+            DBconnection = DriverManager.getConnection(url,username,password);
             System.out.println("DATABASE connection successful");
         } catch (SQLException e){
             System.out.println(e.getMessage());
         }
 
-        return conn;
+        return DBconnection;
     }
 
 

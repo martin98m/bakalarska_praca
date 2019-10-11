@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -12,17 +13,18 @@ public class Main {
 
         Connection c = database.connect();
 
-
+        ArrayList<ServerInfoDat> al = new ArrayList<>();
         String command = "SELECT * FROM server_info";
         try {
             ResultSet rs = c.prepareStatement(command).executeQuery();
-            while(rs.next())
-                System.out.println(rs.getString(1)+" "+
-                        rs.getString(2)+" "+
-                        rs.getString(3)+" "+
-                        rs.getString(4));
+            while(rs.next()){
+                al.add(new ServerInfoDat(rs));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        for (ServerInfoDat s: al) {
+            System.out.println(s.getString());
         }
     }
 }

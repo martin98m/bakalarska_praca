@@ -1,6 +1,7 @@
 import cmd.GatherSystemInformation;
 import database.Database;
 import database.ServerInfoDat;
+import socket.SocketConnectionServer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,8 +14,11 @@ public class Main {
 
         System.out.println("Hello world");
 
-        GatherSystemInformation g = new GatherSystemInformation();
-        g.gatherInformation();
+
+        SocketConnectionServer server = new SocketConnectionServer();
+        server.startSocketServer();
+//        GatherSystemInformation g = new GatherSystemInformation();
+//        g.gatherInformation();
 
 //        getDataFromDB();
     }

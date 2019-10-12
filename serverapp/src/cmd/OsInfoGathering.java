@@ -1,19 +1,22 @@
 package cmd;
 
+import cmd.CommandPromptWIN;
+import database.Database;
 import database.ServerInfoDat;
 
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 
-public abstract class OsInfoGathering {
+public abstract class OsInfoGathering{
 
-    protected CommandPrompt cmd = null;
+    protected CommandPromptWIN cmd = null;
 
     protected String serverName;
     protected int CPU;
     protected int RAM;
     protected int totalRAM;
+    protected ServerInfoDat sid = null;
 
     public void gatherInformation(){
         System.out.println("GATHERING INFO");
@@ -28,14 +31,11 @@ public abstract class OsInfoGathering {
         Time time = Time.valueOf(
                 new SimpleDateFormat("HH:mm:ss").format(new java.util.Date()));
 
-        ServerInfoDat sid = new ServerInfoDat(serverName,CPU,RAM,date,time);
+        sid = new ServerInfoDat(serverName,CPU,RAM,date,time);
 
         System.out.println("GATHERED INFO :");
         System.out.println(sid.getString());
         System.out.println("INFO GATHERING ENDED");
-//        Database db = new Database();
-//        db.sendDataToDatabase(sid);
-
     };
 
     protected void getServerName(){
@@ -49,7 +49,12 @@ public abstract class OsInfoGathering {
     };
 
     protected void sendDataToDatabase(){
+        if (sid == null) System.out.println("SID je null [cmd.OsInfoGathering.java:50]");
 
+        Database db = new Database();
+        db.connect();
+        db.sendDataToDatabase(sid);
+        db.disconnect();
     };
 
 }

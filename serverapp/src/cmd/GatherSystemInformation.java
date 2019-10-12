@@ -1,39 +1,20 @@
-import cmd.CommandPrompt;
-import cmd.OsInfoGathering;
-import database.ServerInfoDat;
+package cmd;
 
-import java.sql.Time;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import cmd.CommandPromptWIN;
+import cmd.OsInfoGathering;
 
 public class GatherSystemInformation extends OsInfoGathering {
 
+
     public GatherSystemInformation(){
-        cmd = new CommandPrompt();
+        cmd = new CommandPromptWIN();
     }
 
-    /*public void gatherInformation(){
-        System.out.println("GATHERING INFO");
-        getServerName();
-        getServerCPU();
-        getServerRAM();
+    protected void sendDataToDatabase() {
+        super.sendDataToDatabase();
+    }
 
-//        testCase();
-
-        Date date = Date.valueOf(
-                new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()));
-        Time time = Time.valueOf(
-                new SimpleDateFormat("HH:mm:ss").format(new java.util.Date()));
-
-        ServerInfoDat sid = new ServerInfoDat(serverName,CPU,RAM,date,time);
-
-        System.out.println("GATHERED INFO :");
-        System.out.println(sid.getString());
-        System.out.println("INFO GATHERING ENDED");
-//        Database db = new Database();
-//        db.sendDataToDatabase(sid);
-    }*/
-
+    @Override
     protected void getServerName(){
         String serverNameCommand = "hostname";
 
@@ -46,6 +27,7 @@ public class GatherSystemInformation extends OsInfoGathering {
         this.serverName = cmd.getArrayList().get(0);
     }
 
+    @Override
     protected void getServerCPU(){
         String cpuUsage = "wmic cpu get loadpercentage";
 
@@ -58,6 +40,7 @@ public class GatherSystemInformation extends OsInfoGathering {
         this.CPU = Integer.valueOf(cmd.getArrayList().get(2).trim());
     }
 
+    @Override
     protected void getServerRAM(){
 //        String totalMemory = "systeminfo | findstr ”Total Physical Memory”";
         String totalMem = "systeminfo";

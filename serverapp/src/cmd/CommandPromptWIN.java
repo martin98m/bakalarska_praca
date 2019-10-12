@@ -5,10 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class CommandPrompt{
+public class CommandPromptWIN{
 
     private Process process = null;
-//    private BufferedReader bufferedReader = null;
     private ArrayList<String> arrayList = null;
 
     public void runCommand(String command) throws InterruptedException {

@@ -1,4 +1,4 @@
-import cmd.CommandPrompt;
+import cmd.GatherSystemInformation;
 import database.Database;
 import database.ServerInfoDat;
 
@@ -15,9 +15,11 @@ public class Main {
 
         GatherSystemInformation g = new GatherSystemInformation();
         g.gatherInformation();
-        if(2>1) return;
 
+//        getDataFromDB();
+    }
 
+    private static void getDataFromDB(){
         Database database = new Database();
         Connection c = database.connect();
 

@@ -8,24 +8,14 @@ import java.util.ArrayList;
 public class Main {
 
     private String memoryCards = "wmic MEMORYCHIP get BankLabel, DeviceLocator, MemoryType, TypeDetail, Capacity, Speed";
-    private String totalMemory = "systeminfo | findstr /C:”Total Physical Memory”";
-    private String aviableMemory = "systeminfo |find “Available Physical Memory”";
-    private static String cpuUsage = "wmic cpu get loadpercentage";
 
     public static void main(String[] args){
 
         System.out.println("Hello world");
-        CommandPrompt cmd = new CommandPrompt();
-        try {
-            cmd.runCommand(cpuUsage);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        System.out.println("SIZE:"+cmd.getLinesInArray().size());
-        for (String line:cmd.getLinesInArray()) {
-            System.out.println(line);
-        }
+        GatherSystemInformation g = new GatherSystemInformation();
+        g.gatherInformation();
+        if(2>1) return;
 
 
         Database database = new Database();

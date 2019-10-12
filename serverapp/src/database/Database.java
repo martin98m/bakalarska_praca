@@ -10,8 +10,8 @@ public class Database {
     private final String username = "postgres";
     private final String password = "postgres";
 
-    protected static final String getMainData = "SELECT * FROM server_info";
-    protected static final String insertData = "INSERT INTO server_info VALUES (?,?,?,?,?)";
+    public static final String getMainData = "SELECT * FROM server_info";
+    public static final String insertData = "INSERT INTO server_info VALUES (?,?,?,?,?)";
 
     private Connection DBconnection = null;
 
@@ -38,5 +38,15 @@ public class Database {
 
     public Connection getDBconnection() {
         return DBconnection;
+    }
+
+    public boolean sendDataToDatabase(ServerInfoDat dataPackage){
+        connect();
+
+
+
+
+        disconnect();
+        return false;
     }
 }

@@ -5,39 +5,27 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class CommandPrompt {
+public class CommandPrompt{
 
     private Process process = null;
-    private BufferedReader bufferedReader = null;
-
+//    private BufferedReader bufferedReader = null;
+    private ArrayList<String> arrayList = null;
 
     public void runCommand(String command) throws InterruptedException {
+
+        process = null;
+        BufferedReader br = null;
+        arrayList = new ArrayList<>();
+
         try {
             process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+//            System.out.println("eXIT: "+process.exitValue());
         }catch (IOException e){
             e.printStackTrace();
         }
-        process.waitFor();
-        bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    }
 
-    public BufferedReader getBufferedReader() {
-        return bufferedReader;
-    }
-
-    public String getFirstLine(){
-        try {
-            return bufferedReader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public ArrayList<String> getLinesInArray(){
-        ArrayList<String> al = new ArrayList<>();
-
-        BufferedReader br = bufferedReader;
+        br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
         String line = "";
         while (true) {
@@ -46,8 +34,13 @@ public class CommandPrompt {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            al.add(line);
+            arrayList.add(line);
         }
-        return al;
+
+        process.waitFor();
+    }
+
+    public ArrayList<String> getArrayList() {
+        return arrayList;
     }
 }

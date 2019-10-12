@@ -10,11 +10,12 @@ public class Database {
     private final String username = "postgres";
     private final String password = "postgres";
 
-    public static final String getMainData = "SELECT * FROM server_info";
+    public static final String getMainData = "SELECT * FROM server_data";
     public static final String insertData = "INSERT INTO server_info VALUES (?,?,?,?,?)";
 
     private Connection DBconnection = null;
 
+    //todo change values later
     public Connection connect(){
 
         try {
@@ -40,6 +41,7 @@ public class Database {
         return DBconnection;
     }
 
+    //todo
     public boolean sendDataToDatabase(ServerInfoDat dataPackage){
         connect();
 

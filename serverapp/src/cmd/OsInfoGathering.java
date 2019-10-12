@@ -1,6 +1,5 @@
 package cmd;
 
-import cmd.CommandPromptWIN;
 import database.Database;
 import database.ServerInfoDat;
 
@@ -20,9 +19,11 @@ public abstract class OsInfoGathering{
 
     public void gatherInformation(){
         System.out.println("GATHERING INFO");
-        getServerName();
-        getServerCPU();
-        getServerRAM();
+        this.serverName = getServerName();
+        this.CPU = getServerCPU();
+        int[] ram = getServerRAM();
+        this.totalRAM = ram[0];
+        this.RAM = ram[1];
 
 //        testCase();
 
@@ -38,14 +39,14 @@ public abstract class OsInfoGathering{
         System.out.println("INFO GATHERING ENDED");
     };
 
-    protected void getServerName(){
-
+    public String getServerName(){
+        return null;
     };
-    protected void getServerCPU(){
-
+    public int getServerCPU() {
+        return 0;
     };
-    protected void getServerRAM(){
-
+    public int[] getServerRAM() {
+        return new int[]{0};
     };
 
     protected void sendDataToDatabase(){

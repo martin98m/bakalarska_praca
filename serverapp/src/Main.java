@@ -14,9 +14,10 @@ public class Main {
 
         System.out.println("Hello world");
 
-
-        SocketConnectionServer server = new SocketConnectionServer();
-        server.startSocketServer();
+        FirstRun fr = new FirstRun();
+        fr.firstRun();
+//        SocketConnectionServer server = new SocketConnectionServer();
+//        server.startSocketServer();
 //        GatherSystemInformation g = new GatherSystemInformation();
 //        g.gatherInformation();
 

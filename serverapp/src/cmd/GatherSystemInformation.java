@@ -1,8 +1,5 @@
 package cmd;
 
-import cmd.CommandPromptWIN;
-import cmd.OsInfoGathering;
-
 public class GatherSystemInformation extends OsInfoGathering {
 
 
@@ -15,7 +12,7 @@ public class GatherSystemInformation extends OsInfoGathering {
     }
 
     @Override
-    protected void getServerName(){
+    public String getServerName(){
         String serverNameCommand = "hostname";
 
         try {
@@ -24,11 +21,11 @@ public class GatherSystemInformation extends OsInfoGathering {
             e.printStackTrace();
         }
         //pc name is 1st line so .get(0)
-        this.serverName = cmd.getArrayList().get(0);
+        return cmd.getArrayList().get(0);
     }
 
     @Override
-    protected void getServerCPU(){
+    public int getServerCPU(){
         String cpuUsage = "wmic cpu get loadpercentage";
 
         try {
@@ -37,12 +34,14 @@ public class GatherSystemInformation extends OsInfoGathering {
             e.printStackTrace();
         }
         //3rd line of output is processor usage out of 100%
-        this.CPU = Integer.valueOf(cmd.getArrayList().get(2).trim());
+        return Integer.valueOf(cmd.getArrayList().get(2).trim());
     }
 
     @Override
-    protected void getServerRAM(){
+    public int[] getServerRAM(){
 //        String totalMemory = "systeminfo | findstr ”Total Physical Memory”";
+
+        int[] ram = new int[2];
         String totalMem = "systeminfo";
         try {
             cmd.runCommand(totalMem);
@@ -53,13 +52,36 @@ public class GatherSystemInformation extends OsInfoGathering {
         for (String line:cmd.getArrayList()) {
             if(line.contains("Total Physical Memory")) {
                 line = line.replaceAll("[a-zA-Z,:]","").trim();
-                this.totalRAM = Integer.parseInt(line);
+                ram[0] = Integer.parseInt(line);
             }
             if(line.contains("Available Physical Memory")){
                 line = line.replaceAll("[a-zA-Z,:]","").trim();
-                this.RAM = this.totalRAM - Integer.parseInt(line);
+                ram[1] =  ram[0] - Integer.parseInt(line);
             }
         }
+        return ram;
+    }
+
+    private String ipconfig = "ipconfig";
+    public String getServerIP(){
+
+        String serverIP = null;
+        try {
+            cmd.runCommand(ipconfig);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //todo line.contains() may not work all the time
+        for (String line:cmd.getArrayList()) {
+            if(line.contains("IPv4 Address. . . . .")){
+//                System.out.println(line);
+                line = line.substring(line.lastIndexOf(':')+2);
+//                System.out.println(line);
+                serverIP = line;
+//                line = line.replaceAll("[a-zA-Z]")
+            }
+        }
+        return serverIP;
     }
 
     private void testCase(){

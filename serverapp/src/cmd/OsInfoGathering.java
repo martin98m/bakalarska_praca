@@ -27,12 +27,8 @@ public abstract class OsInfoGathering{
 
 //        testCase();
 
-        Date date = Date.valueOf(
-                new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()));
-        Time time = Time.valueOf(
-                new SimpleDateFormat("HH:mm:ss").format(new java.util.Date()));
 
-        sid = new ServerInfoDat(serverName,CPU,RAM,date,time);
+        sid = new ServerInfoDat(serverName,CPU,RAM);
 
         System.out.println("GATHERED INFO :");
         System.out.println(sid.getString());
@@ -49,7 +45,7 @@ public abstract class OsInfoGathering{
         return new int[]{0};
     };
 
-    protected void sendDataToDatabase(){
+    public void sendDataToDatabase(){
         if (sid == null) System.out.println("SID je null [cmd.OsInfoGathering.java:50]");
 
         Database db = new Database();

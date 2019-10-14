@@ -1,7 +1,5 @@
 import cmd.GatherSystemInformation;
 import database.Database;
-import database.ServerInfoDat;
-import socket.SocketConnectionServer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,15 +13,16 @@ public class Main {
         System.out.println("Hello world");
 
 
-        getDataFromDB();
+//        getDataFromDB();
 //        FirstRun fr = new FirstRun();
 //        fr.firstRun();
 //        SocketConnectionServer server = new SocketConnectionServer();
 //        server.startSocketServer();
-//        GatherSystemInformation g = new GatherSystemInformation();
-//        g.gatherInformation();
+        GatherSystemInformation g = new GatherSystemInformation();
+        g.gatherInformation();
+        g.sendDataToDatabase();
 
-//        getDataFromDB();
+        getDataFromDB();
     }
 
     private static void getDataFromDB(){
@@ -36,17 +35,15 @@ public class Main {
 
             while (rs.next()) {
                 System.out.println(
-                        rs.getString(1)+"|"+
-                                rs.getInt(2)+"|"+
-                                rs.getInt(3)+"|"+
-                                rs.getDate(4)+"|"+
+                        rs.getString(1)+"\t"+
+                                rs.getInt(2)+"\t"+
+                                rs.getInt(3)+"\t"+
+                                rs.getDate(4)+"\t"+
                                 rs.getTime(5)
                         );
             }
         }catch (SQLException e){
             e.printStackTrace();
         }
-
-
     }
 }

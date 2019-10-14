@@ -10,7 +10,7 @@ public class Database {
     private final String password = "postgres";
 
     public static final String getMainData = "SELECT * FROM server_data";
-    public static final String insertData = "INSERT INTO server_info VALUES (?,?,?,?,?)";
+    public static final String insertData = "INSERT INTO server_data VALUES (?,?,?,?,?)";
     public static final String serverExists = "SELECT * FROM server_info WHERE server_name = ?";
     public static final String insertServer = "INSERT INTO server_info VALUES (?,?)";
     public static final String updateIP = "UPDATE server_info SET server_ip = ? WHERE server_name = ?";
@@ -43,14 +43,22 @@ public class Database {
     }
 
     //todo
-    public boolean sendDataToDatabase(ServerInfoDat dataPackage){
+    public void sendDataToDatabase(ServerInfoDat dataPackage){
         connect();
 
-
-
+        try {
+            PreparedStatement ps = getDBconnection().prepareStatement(insertData);
+            ps.setString(1,dataPackage.getServerName());
+            ps.setInt(2,dataPackage.getCpu());
+            ps.setInt(3,dataPackage.getRAM());
+            ps.setDate(4,dataPackage.getDate());
+            ps.setTime(5,dataPackage.getTime());
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         disconnect();
-        return false;
     }
 
     public ArrayList<String> executeStatementWithReturn(String ps, ArrayList<String> values,int expectedRetCol){

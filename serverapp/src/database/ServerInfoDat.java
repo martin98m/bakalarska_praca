@@ -1,9 +1,10 @@
 package database;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class ServerInfoDat {
 
@@ -17,6 +18,17 @@ public class ServerInfoDat {
         this.serverName = serverName;
         this.cpu = cpu;
         this.RAM = RAM;
+        this.date = date;
+        this.time = time;
+    }
+    public ServerInfoDat(String serverName,int cpu, int RAM){
+        this.serverName = serverName;
+        this.cpu = cpu;
+        this.RAM = RAM;
+        Date date = Date.valueOf(
+                new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()));
+        Time time = Time.valueOf(
+                new SimpleDateFormat("HH:mm:ss").format(new java.util.Date()));
         this.date = date;
         this.time = time;
     }

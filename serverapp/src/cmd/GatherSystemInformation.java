@@ -2,13 +2,8 @@ package cmd;
 
 public class GatherSystemInformation extends OsInfoGathering {
 
-
     public GatherSystemInformation(){
         cmd = new CommandPromptWIN();
-    }
-
-    protected void sendDataToDatabase() {
-        super.sendDataToDatabase();
     }
 
     @Override

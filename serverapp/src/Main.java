@@ -14,8 +14,10 @@ public class Main {
 
         System.out.println("Hello world");
 
-        FirstRun fr = new FirstRun();
-        fr.firstRun();
+
+        getDataFromDB();
+//        FirstRun fr = new FirstRun();
+//        fr.firstRun();
 //        SocketConnectionServer server = new SocketConnectionServer();
 //        server.startSocketServer();
 //        GatherSystemInformation g = new GatherSystemInformation();
@@ -26,19 +28,25 @@ public class Main {
 
     private static void getDataFromDB(){
         Database database = new Database();
-        Connection c = database.connect();
 
-        ArrayList<ServerInfoDat> al = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<>();
+        ResultSet rs = database.executeStatementWithReturn(Database.getMainData,values);
+
         try {
-            ResultSet rs = c.prepareStatement(Database.getMainData).executeQuery();
-            while(rs.next()){
-                al.add(new ServerInfoDat(rs));
+
+            while (rs.next()) {
+                System.out.println(
+                        rs.getString(1)+"|"+
+                                rs.getInt(2)+"|"+
+                                rs.getInt(3)+"|"+
+                                rs.getDate(4)+"|"+
+                                rs.getTime(5)
+                        );
             }
-        } catch (SQLException e) {
+        }catch (SQLException e){
             e.printStackTrace();
         }
-        for (ServerInfoDat s: al) {
-            System.out.println(s.getString());
-        }
+
+
     }
 }

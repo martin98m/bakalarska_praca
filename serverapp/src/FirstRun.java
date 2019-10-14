@@ -2,9 +2,11 @@ import cmd.CommandPromptWIN;
 import cmd.GatherSystemInformation;
 import database.Database;
 
+import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class FirstRun {
 
@@ -12,7 +14,6 @@ public class FirstRun {
     //todo learn server ip
     public void firstRun(){
         Database db = new Database();
-        db.connect();
 
         GatherSystemInformation g = new GatherSystemInformation();
         String serverName = g.getServerName();
@@ -22,27 +23,27 @@ public class FirstRun {
         String insertServer = "INSERT INTO server_info VALUES (?,?)";
         //todo update ip sql
 //        String updateServer = "UPDATE "
-        try {
-            PreparedStatement ps = db.getDBconnection().prepareStatement(serverExists);
-            ps.setString(1,serverName);
-            System.out.println("PS: "+ps);
-            ResultSet rs = ps.executeQuery();
-            //todo update IP of server if not matched
-            if(rs.next()){
-                if(!rs.getString(2).equals(serverIP))
 
-                System.out.println("zaznam existuje IP: "+rs.getString(2));
-            }else {
-                //todo add to database
-                System.out.println("zaznam neexistuje");
-                ps = db.getDBconnection().prepareStatement(insertServer);
-                ps.setString(1,serverName);
-                ps.setString(2,serverIP);
-                ps.execute();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ArrayList<String> values = new ArrayList<>();
+        values.add(serverName);
+
+        ArrayList<String> result = null;
+        result = db.executeStatementWithReturn(Database.serverExists,values,2);
+
+        values.clear();
+        if(result.size() == 0) {
+            System.out.println("DB result == 0");
+            values.add(serverName);
+            values.add(serverIP);
+            db.executeStatementNoReturn(Database.insertServer,values);
         }
-
+        else {
+            System.out.println("Zaznam existuje:" + result);
+            if(!result.get(1).equals(serverIP)){
+                values.add(serverIP);
+                values.add(serverName);
+                db.executeStatementNoReturn(Database.updateIP,values);
+            }
+        }
     }
 }

@@ -53,9 +53,7 @@ public abstract class OsInfoGathering{
         if (sid == null) System.out.println("SID je null [cmd.OsInfoGathering.java:50]");
 
         Database db = new Database();
-        db.connect();
         db.sendDataToDatabase(sid);
-        db.disconnect();
     };
 
 }

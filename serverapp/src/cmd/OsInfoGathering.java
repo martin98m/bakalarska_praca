@@ -3,10 +3,6 @@ package cmd;
 import database.Database;
 import database.ServerInfoDat;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-
 public abstract class OsInfoGathering{
 
     protected CommandPromptWIN cmd = null;

@@ -1,4 +1,3 @@
-import cmd.GatherSystemInformation;
 import database.Database;
 import socket.SocketConnectionServer;
 
@@ -35,8 +34,7 @@ public class Main {
         Thread collectInfo = new Thread(){
             @Override
             public void run() {
-
-                do {
+                while(true){
                     try {
                         GatherSystemInformation g = new GatherSystemInformation();
                         g.gatherInformation();
@@ -47,7 +45,7 @@ public class Main {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                }while (2>1);
+                };
             }
         };
 

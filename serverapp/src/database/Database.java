@@ -19,7 +19,6 @@ public class Database {
 
     private Connection DBconnection = null;
 
-    //todo change values later
     private void connect(){
 
         try {

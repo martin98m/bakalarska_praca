@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 public class FirstRun {
 
-    //TODO server should add itself to database if it isnt there already
-    //todo learn server ip
     public void firstRun(){
         Database db = new Database();
 

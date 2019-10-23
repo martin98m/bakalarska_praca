@@ -5,14 +5,15 @@ import java.util.ArrayList;
 
 public class Database {
 
+    //todo update later for production
     private final String url = "jdbc:postgresql://localhost:5432/server_usage";
     private final String username = "postgres";
     private final String password = "postgres";
 
     public static final String getMainData = "SELECT * FROM server_data";
-    public static final String insertData = "INSERT INTO server_data VALUES (?,?,?,?,?)";
+    public static final String insertData = "INSERT INTO ? VALUES (?,?,?,?,?)";
     public static final String serverExists = "SELECT * FROM server_info WHERE server_name = ?";
-    public static final String insertServer = "INSERT INTO server_info VALUES (?,?)";
+    public static final String insertServerToDB = "INSERT INTO server_info VALUES (?,?,?,?)";
     public static final String updateIP = "UPDATE server_info SET server_ip = ? WHERE server_name = ?";
     public static final String updateValue = "UPDATE ? SET ? = ? WHERE ? = ?";
 
@@ -30,6 +31,7 @@ public class Database {
         }
     }
 
+    //disconnects from database
     private void disconnect(){
         try {
             this.DBconnection.close();
@@ -43,16 +45,18 @@ public class Database {
         return DBconnection;
     }
 
+    //sends Main Data to database
     public void sendDataToDatabase(ServerInfoDat dataPackage){
         connect();
 
         try {
             PreparedStatement ps = getDBconnection().prepareStatement(insertData);
-            ps.setString(1,dataPackage.getServerName());
-            ps.setInt(2,dataPackage.getCpu());
-            ps.setInt(3,dataPackage.getRAM());
-            ps.setDate(4,dataPackage.getDate());
-            ps.setTime(5,dataPackage.getTime());
+            ps.setString(1,"server_data");
+            ps.setString(2,dataPackage.getServerName());
+            ps.setInt(3,dataPackage.getCpu());
+            ps.setInt(4,dataPackage.getRAM());
+            ps.setDate(5,dataPackage.getDate());
+            ps.setTime(6,dataPackage.getTime());
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -61,6 +65,8 @@ public class Database {
         disconnect();
     }
 
+    //executes statement and returns data in formated Array of strings, based on expected number of columns
+    //number of expected columns means num of results in array - >{name,ip,port} -> exp ==4 -> {name,ip,port,name}
     public ArrayList<String> executeStatementWithReturn(String ps, ArrayList<String> values,int expectedRetCol){
 
         connect();
@@ -94,6 +100,8 @@ public class Database {
         disconnect();
         return arrayList;
     }
+
+    //executes statement and returns raw data in ResultSet
     public ResultSet executeStatementWithReturn(String ps, ArrayList<String> values) {
 
         connect();
@@ -117,6 +125,7 @@ public class Database {
         return resultSet;
     }
 
+    //executes statement but doesnt return any result
     public void executeStatementNoReturn(String ps, ArrayList<String> values){
 
         connect();

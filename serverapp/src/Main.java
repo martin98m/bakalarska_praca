@@ -9,6 +9,9 @@ public class Main {
 
     private String memoryCards = "wmic MEMORYCHIP get BankLabel, DeviceLocator, MemoryType, TypeDetail, Capacity, Speed";
 
+    //todo change this
+    public static int sleepBetweenMeasurement = 60000;
+
     public static void main(String[] args){
 
         System.out.println("Hello world");
@@ -29,7 +32,6 @@ public class Main {
         connection.start();
 /*
         //todo get sleep timer from DB
-        int sleepTimer = 600000;
         Thread collectInfo = new Thread(){
             @Override
             public void run() {
@@ -41,7 +43,7 @@ public class Main {
                         g.sendDataToDatabase();
                         //todo check sleep timer from DB
                         //todo in WA ask if user wants to start immediate System test
-                        Thread.sleep(sleepTimer);
+                        Thread.sleep(sleepBetweenMeasurement);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -49,7 +51,6 @@ public class Main {
             }
         };
 
-        connection.start();
         collectInfo.start();
 */
 

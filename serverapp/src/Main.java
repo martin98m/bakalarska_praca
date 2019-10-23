@@ -16,8 +16,8 @@ public class Main {
 
 //        getDataFromDB();
 
-        FirstRun fr = new FirstRun();
-        fr.firstRun();
+//        FirstRun fr = new FirstRun();
+//        fr.firstRun();
 
         Thread connection = new Thread(){
             @Override
@@ -26,9 +26,10 @@ public class Main {
                 server.startSocketServer();
             }
         };
-
+        connection.start();
+/*
         //todo get sleep timer from DB
-        int sleepTimer = 60000;
+        int sleepTimer = 600000;
         Thread collectInfo = new Thread(){
             @Override
             public void run() {
@@ -50,7 +51,7 @@ public class Main {
 
         connection.start();
         collectInfo.start();
-
+*/
 
 //        getDataFromDB();
     }

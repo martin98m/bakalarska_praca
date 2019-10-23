@@ -14,6 +14,7 @@ public class Database {
     public static final String serverExists = "SELECT * FROM server_info WHERE server_name = ?";
     public static final String insertServer = "INSERT INTO server_info VALUES (?,?)";
     public static final String updateIP = "UPDATE server_info SET server_ip = ? WHERE server_name = ?";
+    public static final String updateValue = "UPDATE ? SET ? = ? WHERE ? = ?";
 
     private Connection DBconnection = null;
 

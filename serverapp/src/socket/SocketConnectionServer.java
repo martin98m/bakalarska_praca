@@ -1,43 +1,49 @@
 package socket;
 
+import cmd.GatherSystemInformation;
+import database.Database;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 public class SocketConnectionServer {
 
-    private int port = 9999;
     private ServerSocket server = null;
+    private int port;
+    private int numOfConnections = 0;
 
     public void startSocketServer(){
 
         try {
-            server = new ServerSocket(port);
-//            System.out.println("wait for connection on port:"+port);
-            //TODO make new process
-            int i = 0;
-            while (i < 1){
-                System.out.println("wait for connection on port:"+port);
-                handleCommunication();
-                i++;
+            server = new ServerSocket(0);
+            port = server.getLocalPort();
+            sendPortToDatabse();
+            System.out.println("Socket created and PORT updated in DB");
+
+            while (true){
+                System.out.println("waiting for connections on port:"+port);
+                Socket client = server.accept();
+                Thread socketConnection = new Thread(() -> handleConnection(client));
+                socketConnection.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    //TODO currently read messages sent from Python client
-    private void handleCommunication(){
 
-        Socket client = null;
+    //TODO currently reads messages sent from Python client
+    private void handleConnection(Socket clientSocket){
 
+        Socket client = clientSocket;
         String fromClient = null;
-//        String toClient = null;
+
+        numOfConnections++;
+        System.out.println("got connection on port :" + port + client);
 
         try {
-            client = server.accept();
-            System.out.println("got connection on port :" + port + client);
-
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
 
@@ -48,7 +54,7 @@ public class SocketConnectionServer {
                     break;
                 }
                 fromClient = in.readLine();
-                System.out.println("received: " + fromClient);
+                System.out.println(client.getInetAddress().toString()+'|'+client.getPort()+"|sent: " + fromClient);
 
                 if (fromClient.equals("EXIT")) {
                     in.close();
@@ -57,12 +63,30 @@ public class SocketConnectionServer {
                     run = false;
                     System.out.println("socket closed");
                 }
+                if(fromClient.equals("CONN")){
+                    System.out.println(numOfConnections);
+                }
             }
         } catch (SocketException e){
             System.out.println("Client disconnected");
         } catch (IOException e) {
             e.printStackTrace();
         }
+        numOfConnections--;
+    }
+
+    private void sendPortToDatabse(){
+        Database db = new Database();
+        ArrayList<String> values = new ArrayList<>();
+        values.add("server_info");
+        values.add(String.valueOf(port));
+        values.add("server_name");
+        values.add(new GatherSystemInformation().getServerName());
+
+        //todo remove print and add executeStatement
+        System.out.println(values);
+
+//        db.executeStatementNoReturn(Database.updateValue,values);
     }
 /*
     public void startSocketServer(){

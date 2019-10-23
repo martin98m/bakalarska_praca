@@ -6,6 +6,9 @@ public class GatherSystemInformation extends OsInfoGathering {
         cmd = new CommandPromptWIN();
     }
 
+
+    //todo usage per user
+
     @Override
     public String getServerName(){
         String serverNameCommand = "hostname";

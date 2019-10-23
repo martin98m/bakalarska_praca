@@ -1,5 +1,6 @@
 import cmd.GatherSystemInformation;
 import database.Database;
+import socket.SocketConnectionServer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,15 +15,44 @@ public class Main {
 
 
 //        getDataFromDB();
-//        FirstRun fr = new FirstRun();
-//        fr.firstRun();
-//        SocketConnectionServer server = new SocketConnectionServer();
-//        server.startSocketServer();
-        GatherSystemInformation g = new GatherSystemInformation();
-        g.gatherInformation();
-        g.sendDataToDatabase();
 
-        getDataFromDB();
+        FirstRun fr = new FirstRun();
+        fr.firstRun();
+
+        Thread connection = new Thread(){
+            @Override
+            public void run() {
+                SocketConnectionServer server = new SocketConnectionServer();
+                server.startSocketServer();
+            }
+        };
+
+        //todo get sleep timer from DB
+        int sleepTimer = 60000;
+        Thread collectInfo = new Thread(){
+            @Override
+            public void run() {
+
+                do {
+                    try {
+                        GatherSystemInformation g = new GatherSystemInformation();
+                        g.gatherInformation();
+                        g.sendDataToDatabase();
+                        //todo check sleep timer from DB
+                        //todo in WA ask if user wants to start immediate System test
+                        Thread.sleep(sleepTimer);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }while (2>1);
+            }
+        };
+
+        connection.start();
+        collectInfo.start();
+
+
+//        getDataFromDB();
     }
 
     private static void getDataFromDB(){

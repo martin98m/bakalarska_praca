@@ -42,7 +42,6 @@ public class Database {
         return DBconnection;
     }
 
-    //todo
     public void sendDataToDatabase(ServerInfoDat dataPackage){
         connect();
 

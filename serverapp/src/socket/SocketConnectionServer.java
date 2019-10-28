@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+//todo connect user to CMD
+//todo check if connection was from logged user(name+password)
 public class SocketConnectionServer {
 
     private ServerSocket server = null;
@@ -46,6 +48,11 @@ public class SocketConnectionServer {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+
+            String username = in.readLine();
+            String password = in.readLine();
+            if(!correctLogin(username,password))
+                return;
 
             boolean run = true;
             while (run) {
@@ -87,6 +94,16 @@ public class SocketConnectionServer {
         System.out.println(values);
 
 //        db.executeStatementNoReturn(Database.updateValue,values);
+    }
+
+    //todo finish
+    private boolean correctLogin(String username, String password){
+
+        Database db = new Database();
+//        db.executeStatementWithReturn(Database.)
+
+
+        return false;
     }
 /*
     public void startSocketServer(){

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 
+//todo database data now stores max RAM
 public class ServerInfoDat {
 
     private String serverName;

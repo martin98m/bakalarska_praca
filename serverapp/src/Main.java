@@ -30,7 +30,6 @@ public class Main {
         };
         connection.start();
 /*
-        //todo get sleep timer from DB
         Thread collectInfo = new Thread(){
             @Override
             public void run() {
@@ -39,7 +38,6 @@ public class Main {
                         GatherSystemInformation g = new GatherSystemInformation();
                         g.gatherInformation();
                         g.sendDataToDatabase();
-                        //todo check sleep timer from DB
                         //todo in WA ask if user wants to start immediate System test
                         Thread.sleep(sleepBetweenMeasurement);
                     } catch (InterruptedException e) {

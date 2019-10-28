@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'server_management/table_style.css' %}">
+
+</head>
+<body>
+<table>
+    <tr>
+        <th>Server_name</th>
+        <th>cpu</th>
+        <th>ram</th>
+        <th>date</th>
+        <th>time</th>
+    </tr>
+    {% for data in server_data_from_db %}
+        <tr>
+            <th>{{ data.servername }}</th>
+            <th>{{ data.cpu_usage }}</th>
+            <th>{{ data.ram_usage }}</th>
+            <th>{{ data.date }}</th>
+            <th>{{ data.time }}</th>
+        </tr>
+    {% endfor %}
+</table>
+<a href="server_info">SERVER_INFO</a>
+</body>
+</html>

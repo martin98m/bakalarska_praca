@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'server_management/table_style.css' %}">
+
+</head>
+<body>
+Hello
+    <table>
+        <tr>
+            <th>ServerName</th>
+            <th>Server_ip</th>
+        </tr>
+        {% for data in data_from_db %}
+            <tr>
+                <th>{{ data.server_name }}</th>
+                <th>{{ data.server_ip }}</th>
+            </tr>
+        {% endfor %}
+    </table>
+
+<a href="server_data">SERVER_DATA</a>
+</body>
+</html>

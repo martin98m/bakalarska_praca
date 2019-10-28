@@ -16,6 +16,7 @@ public class Database {
     public static final String insertServerToDB = "INSERT INTO server_info VALUES (?,?,?,?)";
     public static final String updateIP = "UPDATE server_info SET server_ip = ? WHERE server_name = ?";
     public static final String updateValue = "UPDATE ? SET ? = ? WHERE ? = ?";
+    public static final String checkLogin = "SELECT * FROM user_login WHERE username = ? AND password = ?";
 
     private Connection DBconnection = null;
 

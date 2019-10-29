@@ -86,21 +86,20 @@ public class SocketConnectionServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("HANDLE EXITING");
         numOfConnections--;
     }
 
     private void sendPortToDatabse(){
         Database db = new Database();
-        ArrayList<String> values = new ArrayList<>();
-        values.add("server_info");
-        values.add(String.valueOf(port));
-        values.add("server_name");
+        ArrayList<Object> values = new ArrayList<>();
+        values.add(Integer.valueOf(port));
         values.add(new GatherSystemInformation().getServerName());
 
         //todo remove print and add executeStatement
-        System.out.println(values);
+        System.out.println("PORT UPDATED TO DB:"+values);
 
-//        db.executeStatementNoReturn(Database.updateValue,values);
+        db.executeStatementNoReturnObjects(Database.updateServerPort,values);
     }
 
     //todo finish

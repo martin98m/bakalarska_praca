@@ -6,26 +6,29 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 
-//todo database data now stores max RAM
 public class ServerInfoDat {
 
     private String serverName;
     private int cpu;
     private int RAM;
+    private int RAM_max;
     private Date date;
     private Time time;
 
-    public ServerInfoDat(String serverName, int cpu, int RAM, Date date,Time time){
+    public ServerInfoDat(String serverName, int cpu, int RAM,int RAM_max, Date date,Time time){
         this.serverName = serverName;
         this.cpu = cpu;
         this.RAM = RAM;
+        this.RAM_max = RAM_max;
         this.date = date;
         this.time = time;
     }
-    public ServerInfoDat(String serverName,int cpu, int RAM){
+
+    public ServerInfoDat(String serverName,int cpu, int RAM, int RAM_max){
         this.serverName = serverName;
         this.cpu = cpu;
         this.RAM = RAM;
+        this.RAM_max = RAM_max;
         Date date = Date.valueOf(
                 new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()));
         Time time = Time.valueOf(
@@ -39,8 +42,9 @@ public class ServerInfoDat {
             this.serverName = rs.getString(1);
             this.cpu = rs.getInt(2);
             this.RAM = rs.getInt(3);
-            this.date = rs.getDate(4);
-            this.time = rs.getTime(5);
+            this.RAM_max = rs.getInt(4);
+            this.date = rs.getDate(5);
+            this.time = rs.getTime(6);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -49,15 +53,13 @@ public class ServerInfoDat {
     public String getServerName() {
         return serverName;
     }
-
     public int getCpu() {
         return cpu;
     }
-
     public int getRAM() {
         return RAM;
     }
-
+    public int getRAM_max(){return RAM_max;}
     public Date getDate() {
         return date;
     }
@@ -66,7 +68,7 @@ public class ServerInfoDat {
     }
 
     public String getString(){
-        return this.getServerName()+","+getCpu()+","+getRAM()+","+getDate()+","+getTime();
+        return this.getServerName()+","+getCpu()+","+getRAM()+","+getRAM_max()+","+getDate()+","+getTime();
     }
 
 }

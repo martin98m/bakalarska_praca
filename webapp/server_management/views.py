@@ -35,7 +35,7 @@ def server_call(request, server_name):
     if request.method == 'POST':
         form = CommandForm(request.POST)
         if form.is_valid():
-            server = ServerConnection('localhost', 52161)
+            server = ServerConnection('localhost', 53593)
             # server.send_msg()
             print("VALID FORM")
             data = form.cleaned_data

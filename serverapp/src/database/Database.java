@@ -11,20 +11,22 @@ public class Database {
     private final String password = "postgres";
 
     public static final String getMainData = "SELECT * FROM server_data";
-    public static final String insertData = "INSERT INTO ? VALUES (?,?,?,?,?)";
+    public static final String insertData = "INSERT INTO server_data VALUES (?,?,?,?,?,?)";
     public static final String serverExists = "SELECT * FROM server_info WHERE server_name = ?";
     public static final String insertServerToDB = "INSERT INTO server_info VALUES (?,?,?,?)";
     public static final String updateIP = "UPDATE server_info SET server_ip = ? WHERE server_name = ?";
-    public static final String updateValue = "UPDATE ? SET ? = ? WHERE ? = ?";
+    public static final String updateServerInfo = "UPDATE server_info SET ? = ? WHERE ? = ?";
     public static final String checkLogin = "SELECT * FROM user_login WHERE username = ? AND password = ?";
+    public static final String getSleepTime = "SELECT time_between_next_data_collection FROM server_info WHERE server_name = ?";
+    public static final String updateServerPort = "UPDATE server_info SET server_port = ? WHERE server_name = ?";
 
-    private Connection DBconnection = null;
+    private Connection dbConnection = null;
 
     private void connect(){
 
         try {
             //Connects to database using ^^ parameters
-            DBconnection = DriverManager.getConnection(url,username,password);
+            dbConnection = DriverManager.getConnection(url,username,password);
             System.out.println("DATABASE connection successful");
         } catch (SQLException e){
             System.out.println(e.getMessage());
@@ -34,29 +36,31 @@ public class Database {
     //disconnects from database
     private void disconnect(){
         try {
-            this.DBconnection.close();
+            this.dbConnection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        DBconnection = null;
+        dbConnection = null;
     }
 
-    public Connection getDBconnection() {
-        return DBconnection;
+    public Connection getDbConnection() {
+        return dbConnection;
     }
 
     //sends Main Data to database
     public void sendDataToDatabase(ServerInfoDat dataPackage){
         connect();
-
+        System.out.println(dataPackage.getString());
         try {
-            PreparedStatement ps = getDBconnection().prepareStatement(insertData);
-            ps.setString(1,"server_data");
-            ps.setString(2,dataPackage.getServerName());
-            ps.setInt(3,dataPackage.getCpu());
-            ps.setInt(4,dataPackage.getRAM());
+            PreparedStatement ps = getDbConnection().prepareStatement(insertData);
+//            ps.setString(1,"server_data");
+            ps.setString(1,dataPackage.getServerName());
+            ps.setInt(2,dataPackage.getCpu());
+            ps.setInt(3,dataPackage.getRAM());
+            ps.setInt(4,dataPackage.getRAM_max());
             ps.setDate(5,dataPackage.getDate());
             ps.setTime(6,dataPackage.getTime());
+//            System.out.println(ps);
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,7 +79,7 @@ public class Database {
         ResultSet rs = null;
 
         try {
-            PreparedStatement preparedStatement = getDBconnection().prepareStatement(ps);
+            PreparedStatement preparedStatement = getDbConnection().prepareStatement(ps);
             int i = 1;
             for (String value:values) {
                 preparedStatement.setString(i,value);
@@ -109,7 +113,7 @@ public class Database {
 
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = getDBconnection().prepareStatement(ps);
+            preparedStatement = getDbConnection().prepareStatement(ps);
             int i = 1;
             for (String value:values) {
                 preparedStatement.setString(i,value);
@@ -126,17 +130,21 @@ public class Database {
     }
 
     //executes statement but doesnt return any result
-    public void executeStatementNoReturn(String ps, ArrayList<String> values){
+    public void executeStatementNoReturnObjects(String ps, ArrayList<Object> values){
 
         connect();
 
         try {
-            PreparedStatement preparedStatement = getDBconnection().prepareStatement(ps);
+            PreparedStatement preparedStatement = getDbConnection().prepareStatement(ps);
             int i = 1;
-            for (String value:values) {
-                preparedStatement.setString(i,value);
+            for (Object value:values) {
+                if(value instanceof String)
+                    preparedStatement.setString(i, (String) value);
+                else if(value instanceof Integer)
+                    preparedStatement.setInt(i, (int) value);
                 i++;
             }
+            System.out.println(preparedStatement);
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -144,5 +152,22 @@ public class Database {
 
         disconnect();
     }
+    public void executeStatementNoReturnStrings(String ps, ArrayList<String> values){
+        connect();
 
+        try {
+            PreparedStatement preparedStatement = getDbConnection().prepareStatement(ps);
+            int i = 1;
+            for (String value:values) {
+                preparedStatement.setString(i, (String) value);
+                i++;
+            }
+            System.out.println(preparedStatement);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        disconnect();
+    }
 }

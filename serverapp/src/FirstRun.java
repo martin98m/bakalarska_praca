@@ -26,7 +26,7 @@ public class FirstRun {
             values.add(serverIP);
             values.add(null);//PORT will be added when SocketConnections starts
             values.add("60000");//default value - time between measuring system usage
-            db.executeStatementNoReturn(Database.insertServerToDB,values);
+            db.executeStatementNoReturnStrings(Database.insertServerToDB,values);
         }
         //server was found in DB
         else {
@@ -36,7 +36,7 @@ public class FirstRun {
             if(!result.get(1).equals(serverIP)){        //if IPs dont match they will be updated
                 values.add(serverIP);
                 values.add(serverName);
-                db.executeStatementNoReturn(Database.updateIP,values);
+                db.executeStatementNoReturnStrings(Database.updateIP,values);
             }
         }
     }

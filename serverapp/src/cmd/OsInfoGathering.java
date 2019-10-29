@@ -24,7 +24,7 @@ public abstract class OsInfoGathering{
 //        testCase();
 
 
-        sid = new ServerInfoDat(serverName,CPU,RAM);
+        sid = new ServerInfoDat(serverName,CPU,RAM,totalRAM);
 
         System.out.println("GATHERED INFO :");
         System.out.println(sid.getString());

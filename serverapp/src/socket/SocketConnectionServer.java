@@ -49,21 +49,28 @@ public class SocketConnectionServer {
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
 
+            System.out.println("send username+password");
             String username = in.readLine();
             String password = in.readLine();
-            if(!correctLogin(username,password))
-                return;
-
+//            if(!correctLogin(username,password))
+//                return;
+            System.out.println("login correct");
             boolean run = true;
             while (run) {
                 if (!client.isConnected()) {
                     client.close();
                     break;
                 }
+                System.out.println("waiting for message");
                 fromClient = in.readLine();
+//                if(fromClient == null || fromClient.length() == 0) continue;
                 System.out.println(client.getInetAddress().toString()+'|'+client.getPort()+"|sent: " + fromClient);
-
-                if (fromClient.equals("EXIT")) {
+                if(fromClient == null){
+                    numOfConnections--;
+                    System.out.println("DISCONNECT?");
+                    return;
+                }
+                if (fromClient.equals("EXIT2")) {
                     in.close();
                     out.close();
                     client.close();

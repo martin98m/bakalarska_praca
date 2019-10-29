@@ -13,11 +13,13 @@
         <tr>
             <th>ServerName</th>
             <th>Server_ip</th>
+            <th>Server port</th>
         </tr>
         {% for data in data_from_db %}
             <tr>
-                <th>{{ data.server_name }}</th>
+                <th><a href="server_call/{{ data.server_name }}">{{ data.server_name }}</a></th>
                 <th>{{ data.server_ip }}</th>
+                <th>{{ data.server_port }}</th>
             </tr>
         {% endfor %}
     </table>

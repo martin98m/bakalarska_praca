@@ -6,16 +6,16 @@ import java.util.ArrayList;
 
 public class Main {
 
-    private String memoryCards = "wmic MEMORYCHIP get BankLabel, DeviceLocator, MemoryType, TypeDetail, Capacity, Speed";
-
     public static int sleepBetweenMeasurement;
     public static void main(String[] args){
 
         System.out.println("Starting server management application...");
 
-        FirstRun fr = new FirstRun();
-        fr.firstRun();
+        //checks if ip is correct + sets time_between_system_checks + system test
+//        FirstRun fr = new FirstRun();
+//        fr.firstRun();
 
+        //creates server socket for communication with webapp
         Thread connection = new Thread(){
             @Override
             public void run() {
@@ -25,25 +25,24 @@ public class Main {
         };
         connection.start();
 
+        //system check in set interval + uploads data to database
         Thread collectInfo = new Thread(){
             @Override
             public void run() {
                 while(true){
                     try {
+                        Thread.sleep(sleepBetweenMeasurement);//time set in First run
                         GatherSystemInformation g = new GatherSystemInformation();
                         g.gatherInformation();
                         g.sendDataToDatabase();
-                        //todo in WA ask if user wants to start immediate System test
-                        setSleepTime(g.getServerName());
-                        Thread.sleep(sleepBetweenMeasurement);
+//                        setSleepTime(g.getServerName());
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
             }
         };
-
-        collectInfo.start();
+//        collectInfo.start();
 
     }
 

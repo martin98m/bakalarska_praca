@@ -4,9 +4,10 @@ from django.db import models
 
 
 class ServerData(models.Model):
-    servername = models.CharField(max_length=255, primary_key=True)
+    server_name = models.CharField(max_length=255, primary_key=True)
     cpu_usage = models.IntegerField()
-    ram_usage = models.IntegerField()
+    ram_capacity = models.IntegerField()
+    ram_max = models.IntegerField()
     date = models.DateField()
     time = models.TimeField()
 
@@ -18,6 +19,8 @@ class ServerData(models.Model):
 class ServerInfo(models.Model):
     server_name = models.CharField(unique=True, max_length=255, primary_key=True)
     server_ip = models.CharField(max_length=16)
+    server_port = models.IntegerField()
+    time_between_next_data_collection = models.IntegerField()
 
     class Meta:
         managed = False

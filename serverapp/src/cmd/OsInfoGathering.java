@@ -5,30 +5,25 @@ import database.ServerInfoDat;
 
 public abstract class OsInfoGathering{
 
-    protected CommandPromptWIN cmd = null;
+    CommandPromptWIN cmd = null;
 
-    protected String serverName;
-    protected int CPU;
-    protected int RAM;
-    protected int totalRAM;
-    protected ServerInfoDat sid = null;
+    String serverName;
+    int CPU;
+    int RAM;
+    int totalRAM;
+    ServerInfoDat sid = null;
 
     public void gatherInformation(){
-        System.out.println("GATHERING INFO");
         this.serverName = getServerName();
         this.CPU = getServerCPU();
         int[] ram = getServerRAM();
         this.totalRAM = ram[0];
         this.RAM = ram[1];
 
-//        testCase();
-
-
         sid = new ServerInfoDat(serverName,CPU,RAM,totalRAM);
 
         System.out.println("GATHERED INFO :");
         System.out.println(sid.getString());
-        System.out.println("INFO GATHERING ENDED");
     };
 
     public String getServerName(){

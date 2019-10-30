@@ -7,20 +7,19 @@ import java.util.ArrayList;
 
 public class CommandPromptWIN{
 
-    private Process process = null;
     private ArrayList<String> arrayList = null;
 
-    public void runCommand(String command) throws InterruptedException {
+    public void runCommand(String command, boolean needsCmd){
 
-        process = null;
+        Process process = null;
         BufferedReader br = null;
         arrayList = new ArrayList<>();
-
+        if(needsCmd) command = "cmd /c " + command;
         try {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
 //            System.out.println("eXIT: "+process.exitValue());
-        }catch (IOException e){
+        }catch (IOException | InterruptedException e){
             e.printStackTrace();
         }
 
@@ -35,8 +34,6 @@ public class CommandPromptWIN{
             }
             arrayList.add(line);
         }
-
-        process.waitFor();
     }
 
     public ArrayList<String> getArrayList() {

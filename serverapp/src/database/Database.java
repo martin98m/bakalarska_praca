@@ -19,6 +19,7 @@ public class Database {
     public static final String checkLogin = "SELECT * FROM user_login WHERE username = ? AND password = ?";
     public static final String getSleepTime = "SELECT time_between_next_data_collection FROM server_info WHERE server_name = ?";
     public static final String updateServerPort = "UPDATE server_info SET server_port = ? WHERE server_name = ?";
+    public static final String userLogin = "SELECT * FROM user_login WHERE  username = ? AND password = ?";
 
     private Connection dbConnection = null;
 
@@ -50,7 +51,7 @@ public class Database {
     //sends Main Data to database
     public void sendDataToDatabase(ServerInfoDat dataPackage){
         connect();
-        System.out.println(dataPackage.getString());
+//        System.out.println(dataPackage.getString());
         try {
             PreparedStatement ps = getDbConnection().prepareStatement(insertData);
 //            ps.setString(1,"server_data");

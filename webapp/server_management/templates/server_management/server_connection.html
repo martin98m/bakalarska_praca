@@ -13,5 +13,16 @@
         <button type="submit">Submit</button>
     </form>
     {{ cmd }}
+
+    <ul>
+    {% for x in response %}
+        <li>{{ x }}</li>
+    {% endfor %}
+    </ul>
+    {% for x in response %}
+        <pre>{{ x }}</pre>
+    {% endfor %}
+
+
 </body>
 </html>

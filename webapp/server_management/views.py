@@ -30,18 +30,24 @@ class ServerDataView(generic.ListView):
 def server_call(request, server_name):
     template_name = 'server_management/server_connection.html'
     form = CommandForm()
-    fill = {'par1': server_name, 'form':form}
+    fill = {'par1': server_name, 'form': form}
+    server_info = ServerInfo.objects.get(server_name__exact=server_name)
+    print(server_info.server_name, server_info.server_ip,
+          server_info.server_port, server_info.time_between_next_data_collection)
 
     if request.method == 'POST':
         form = CommandForm(request.POST)
         if form.is_valid():
-            server = ServerConnection('localhost', 53593)
-            # server.send_msg()
+            server = ServerConnection(server_info.server_ip, server_info.server_port)
             print("VALID FORM")
             data = form.cleaned_data
-            server.send_msg(data['command'])
+            # server.send_msg(data['command'])
+            resp = server.send_message_with_response(data['command'])
             server.disconnect()
+            # print(resp)
             fill.update({'cmd': data['command']})
+            fill.update({'response': resp})
+            # print(fill)
             return render(request, 'server_management/server_connection.html', fill)
 
     return render(request, 'server_management/server_connection.html', fill)

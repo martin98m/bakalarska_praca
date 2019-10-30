@@ -92,10 +92,16 @@ public class SocketConnectionServer {
                     CommandPromptWIN cmd = new CommandPromptWIN();
                     cmd.runCommand(fromClient, true);
                     ArrayList<String> response = cmd.getArrayList();
-                    System.out.print("ResponseSize:" + response.size());
+                    System.out.println("ResponseSize:" + response.size());
                     out.println(response.size());
-                    for (String msg : response)
+//                    out.println(response);
+                    int i = 1;
+                    for (String msg : response) {
+                        out.println(msg.length());
+                        System.out.println(i+"|"+msg);
                         out.println(msg);
+                        i++;
+                    }
                 }
             }
         } catch (SocketException e){

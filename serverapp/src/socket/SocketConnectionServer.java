@@ -36,6 +36,7 @@ public class SocketConnectionServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("SERVER OVER");
     }
 
     //TODO currently reads messages sent from Python client
@@ -85,23 +86,21 @@ public class SocketConnectionServer {
                     break;
                 }
                 else if(fromClient.equals("CONN")){
-                    out.println(numOfConnections);
-                    System.out.println(numOfConnections);
+                    ArrayList<String> msg = new ArrayList<>();
+                    msg.add(String.valueOf(numOfConnections));
+//                    out.println(numOfConnections);
+                    sendMessageToWebApp(out, msg);
+//                    System.out.println(numOfConnections);
+                }
+                else if(fromClient.equals("CHANGE")){
+                    System.out.println("CHANGE time_between_...");
                 }
                 else {
                     CommandPromptWIN cmd = new CommandPromptWIN();
                     cmd.runCommand(fromClient, true);
-                    ArrayList<String> response = cmd.getArrayList();
-                    System.out.println("ResponseSize:" + response.size());
-                    out.println(response.size());
-//                    out.println(response);
-                    int i = 1;
-                    for (String msg : response) {
-                        out.println(msg.length());
-                        System.out.println(i+"|"+msg);
-                        out.println(msg);
-                        i++;
-                    }
+                    ArrayList<String> response = (cmd.getStderr().size() == 0) ? cmd.getStdout() : cmd.getStderr();
+
+                    sendMessageToWebApp(out, response);
                 }
             }
         } catch (SocketException e){
@@ -111,6 +110,7 @@ public class SocketConnectionServer {
         }
         System.out.println("HANDLE EXITING");
         numOfConnections--;
+        Thread.currentThread().interrupt();
     }
 
     private void sendPortToDatabase(){
@@ -134,5 +134,19 @@ public class SocketConnectionServer {
         values.add(password);
         ArrayList result = db.executeStatementWithReturn(Database.userLogin, values, 2);
         return result.size() != 0;
+    }
+
+    private void sendMessageToWebApp(PrintWriter out,ArrayList<String> message){
+        //sends how many lines will be send
+        out.println(message.size());
+        int i = 1;
+        for (String msg : message) {
+            //1. sends length of line to read
+            out.println(msg.length());
+//            System.out.println(i+"|"+msg);
+            //2. sends line
+            out.println(msg);
+            i++;
+        }
     }
 }

@@ -15,7 +15,7 @@ public class GatherSystemInformation extends OsInfoGathering {
         cmd.runCommand(serverNameCommand, false);
 
         //pc name is 1st line so .get(0)
-        return cmd.getArrayList().get(0);
+        return cmd.getStdout().get(0);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class GatherSystemInformation extends OsInfoGathering {
         cmd.runCommand(cpuUsage, false);
 
         //3rd line of output is processor usage out of 100%
-        return Integer.parseInt(cmd.getArrayList().get(2).trim());
+        return Integer.parseInt(cmd.getStdout().get(2).trim());
     }
 
     @Override
@@ -37,7 +37,7 @@ public class GatherSystemInformation extends OsInfoGathering {
 
         cmd.runCommand(totalMem, false);
 
-        for (String line:cmd.getArrayList()) {
+        for (String line:cmd.getStdout()) {
             if(line.contains("Total Physical Memory")) {
                 line = line.replaceAll("[a-zA-Z,:]","").trim();
                 ram[0] = Integer.parseInt(line);
@@ -58,7 +58,7 @@ public class GatherSystemInformation extends OsInfoGathering {
         cmd.runCommand(ipconfig,false);
 
         //todo line.contains() may not work all the time
-        for (String line:cmd.getArrayList()) {
+        for (String line:cmd.getStdout()) {
             if(line.contains("IPv4 Address. . . . .")){
                 line = line.substring(line.lastIndexOf(':')+2);
                 serverIP = line;

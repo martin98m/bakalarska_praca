@@ -94,7 +94,7 @@ public class Database {
             String data;
             while(i<=expectedRetCol){
                 data = rs.getString(i);
-                System.out.println(data);
+//                System.out.println(data);
                 arrayList.add(data);
                 i++;
             }

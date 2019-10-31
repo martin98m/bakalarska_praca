@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        pre{
+            background: black;
+            color: aliceblue;
+        }
+    </style>
 </head>
 <body>
     {{ par1 }}
@@ -19,10 +25,12 @@
         <li>{{ x }}</li>
     {% endfor %}
     </ul>
-    {% for x in response %}
-        <pre>{{ x }}</pre>
-    {% endfor %}
-
+    {#        <pre>{{ x }}</pre>#}
+    <div>
+        <pre>
+            {% for x in response %}{{ x }}{% endfor %}
+        </pre>
+    </div>
 
 </body>
 </html>

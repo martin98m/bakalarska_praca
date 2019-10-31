@@ -17,6 +17,7 @@ class ServerConnection:
     def send_msg(self, message):
         msg = message.rstrip() + '\n'
         self.sock.sendall(msg.encode('UTF-8'))
+        return 'changed'
 
     def send_message_with_response(self, message):
         msg = message.rstrip() + '\n'
@@ -33,7 +34,10 @@ class ServerConnection:
             print(read_num)
             line = self.sock.recv(read_num+2)
             print(line)
-            lines.append(line.decode('utf-8'))
+            line = line.decode('utf-8')
+            # line = line.replace('\r', '')
+            line = line.replace('\n', '')
+            lines.append(line)
 
         return lines
 
@@ -52,8 +56,3 @@ class ServerConnection:
 
     def disconnect(self):
         self.sock.close()
-
-# while True:
-#     msg = input() + '\n'  # \n is importatnt when sending
-#     sock.sendall(msg.encode('UTF-8'))
-#     print("S "+msg)

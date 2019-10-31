@@ -42,7 +42,11 @@ def server_call(request, server_name):
             print("VALID FORM")
             data = form.cleaned_data
             # server.send_msg(data['command'])
-            resp = server.send_message_with_response(data['command'])
+            print(data)
+            if data['command'] == 'CHANGE':
+                resp = server.send_msg(data['command'])
+            else:
+                resp = server.send_message_with_response(data['command'])
             server.disconnect()
             # print(resp)
             fill.update({'cmd': data['command']})

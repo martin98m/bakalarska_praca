@@ -2,4 +2,9 @@
 /workspace.xml
 .idea
 out
+#Python
 __pychache__/
+*.py[cod]	
+
+#Django
+.log

@@ -1,14 +1,15 @@
 package cmd;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 public class CommandPromptWIN{
 
-    private ArrayList<String> stdout = null;
-    private ArrayList<String> stderr = null;
+    private ArrayList<String> stdout;
+    private ArrayList<String> stderr;
+    private BufferedWriter stdin;
+
 
     public void runCommand(String command, boolean needsCmd){
 
@@ -54,6 +55,9 @@ public class CommandPromptWIN{
 
         System.out.println("COMMAND OVER");
     }
+
+
+
 
     public ArrayList<String> getStdout() {
         return stdout;

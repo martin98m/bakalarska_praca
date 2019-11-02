@@ -7,30 +7,67 @@
         pre{
             background: black;
             color: aliceblue;
+            max-height: 500px;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
     {{ par1 }}
 
-    <form method="post">
+    <form id="send_command" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+{#        {{ form.as_p }}#}
+        <input name="command">
         <button type="submit">Submit</button>
     </form>
     {{ cmd }}
 
-    <ul>
-    {% for x in response %}
-        <li>{{ x }}</li>
-    {% endfor %}
-    </ul>
-    {#        <pre>{{ x }}</pre>#}
+{#    <ul>#}
+{#    {% for x in response %}#}
+{#        <li>{{ x }}</li>#}
+{#    {% endfor %}#}
+{#    </ul>#}
     <div>
-        <pre>
+        <pre id="scroll" >
+            {% for a in old_data %}{{ a }}{% endfor %}
             {% for x in response %}{{ x }}{% endfor %}
         </pre>
     </div>
+
+    <button onclick="alert('You clicked the button using JS')">Click me!</button>
+
+    <button id ="about">Click me, too!</button>
+
+    <button type="button" onclick='deleteHistory()'>Delete old_data</button>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            console.log("jquery ide");
+            $("#about").click(function (event) {
+                alert("You just used JQUERY");
+            })
+        });
+        console.log("Hello");
+    </script>
+    <script>
+        function scrollToBottom() {
+            var obj = document.getElementById("scroll");
+            console.log(obj);
+            console.log(obj.scrollTop);
+            console.log(obj.scrollHeight);
+            obj.scrollTop = obj.scrollHeight;
+            console.log(obj.scrollTop);
+        }
+        scrollToBottom();
+    </script>
+    <script>
+        function deleteHistory() {
+            document.cookie="old_data=;expires=Thu 01 Jan 1970 00:00:00; path=/;";
+            location.reload();
+        }
+    </script>
 
 </body>
 </html>

@@ -1,5 +1,6 @@
 package socket;
 
+import cmd.CmdRunner;
 import cmd.CommandPromptWIN;
 import cmd.GatherSystemInformation;
 import database.Database;
@@ -27,7 +28,7 @@ public class SocketConnectionServer {
             System.out.println("Socket created and PORT updated in DB");
 
             while (true){
-                System.out.println("waiting for connections on port:"+port);
+                System.out.println(server.getLocalSocketAddress()+"waiting for connections on port:"+port);
                 Socket client = server.accept();
                 System.out.println("client connected");
                 Thread socketConnection = new Thread(() -> handleConnection(client));
@@ -54,6 +55,8 @@ public class SocketConnectionServer {
             System.out.println("send username+password");
             String username = in.readLine();
             String password = in.readLine();
+            System.out.println("name:"+username);
+            System.out.println("pass"+password);
             if(!correctLogin(username,password)){
                 System.out.println("incorrect username or password");
                 return;
@@ -96,21 +99,28 @@ public class SocketConnectionServer {
                     System.out.println("CHANGE time_between_...");
                 }
                 else {
-                    CommandPromptWIN cmd = new CommandPromptWIN();
-                    cmd.runCommand(fromClient, true);
-                    ArrayList<String> response = (cmd.getStderr().size() == 0) ? cmd.getStdout() : cmd.getStderr();
-
-                    sendMessageToWebApp(out, response);
+                    CmdRunner cmdRunner = new CmdRunner(in, out, fromClient);
+//                    CommandLineHandler cld = new CommandLineHandler(in, out, fromClient);
+//                    cld.run();
+                    cmdRunner.run();
+//                    CommandPromptWIN cmd = new CommandPromptWIN();
+//                    cmd.runCommand(fromClient, true);
+//                    ArrayList<String> response = (cmd.getStderr().size() == 0) ? cmd.getStdout() : cmd.getStderr();
+                    System.out.println("OVER");
+//                    sendMessageToWebApp(out, response);
                 }
             }
         } catch (SocketException e){
+            //todo
+            //cmndRunner.close()
             System.out.println("Client disconnected");
+            Thread.currentThread().interrupt();
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("HANDLE EXITING");
         numOfConnections--;
-        Thread.currentThread().interrupt();
+
     }
 
     private void sendPortToDatabase(){

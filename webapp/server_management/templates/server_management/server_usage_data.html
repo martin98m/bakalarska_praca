@@ -8,6 +8,16 @@
 
 </head>
 <body>
+{% block loggedin %}
+    {% if user.is_authenticated %}
+        You are logged in as: {{ user.username }}
+        <a href="/server_management/accounts/logout">logout</a>
+    {% else %}
+        You are not logged in
+        <a href="/server_management/accounts/login">login</a>
+    {% endif %}
+{% endblock %}
+
 <table>
     <tr>
         <th>Server_name</th>
@@ -16,7 +26,7 @@
         <th>date</th>
         <th>time</th>
     </tr>
-    {% for data in server_data_from_db %}
+    {% for data in raw_data %}
         <tr>
             <th>{{ data.server_name }}</th>
             <th>{{ data.cpu_usage }}</th>

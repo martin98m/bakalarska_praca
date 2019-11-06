@@ -45,7 +45,14 @@ public class CmdRunner implements Runnable {
             String cmnd;
             while (process.isAlive()) {
                 try {
-                        cmnd = in.readLine();
+                    cmnd = in.readLine();
+                    //todo when clients disconnects
+                    if(cmnd == null) {
+                        System.out.println("ERROR reading null");
+                        System.out.println(in.ready());
+                        process.destroy();
+                        break;
+                    }
                     stdin.write(cmnd + "\n");
                     stdin.flush();
 //                        if (cmnd.equals("exit"))

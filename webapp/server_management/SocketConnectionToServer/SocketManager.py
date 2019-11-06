@@ -4,14 +4,11 @@ from server_management.SocketConnectionToServer.Connection import ServerConnecti
 class SocketManager:
     class __SocketManager:
         def __init__(self):
-            # print('Creting new SocketManager')
-            # self.list_of_connection = {'name': 10}
             self.list_of_connections = {}
 
     instance = None
 
     def __init__(self):
-        # print('Calling SocketManager')
         if self.instance is None:
             SocketManager.instance = SocketManager.__SocketManager()
 
@@ -37,9 +34,10 @@ class SocketManager:
     def remove_socket(self, name):
         socket = self.instance.list_of_connections.get(name)
         if socket is None:
-            raise Exception("Removing Failed, socket does not exist")
-        print('RemovingSocket: ' + socket)
+            print("Removing Failed, socket does not exist")
+        print('RemovingSocket: ')
         socket.disconnect()
+        print("DISCONNECTED SOCKET")
         self.instance.list_of_connections.pop(name)
 
     def num_of_connections(self):

@@ -2,14 +2,15 @@ import socket
 
 
 # todo if new host/port are added dc from last
+# todo if new host+port dont match discard old socket and add new
 
-
+# todo add username + password to constructor
 class ServerConnection:
     def __init__(self, host, port):
         self.host = host
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(1)  # reading ends after 2 sec of inactivity
+        self.sock.settimeout(1)  # reading ends after #1 sec of inactivity
         self.connected = False
 
     def get_sock(self):

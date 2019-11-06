@@ -3,8 +3,12 @@
 .idea
 out
 #Python
-__pychache__/
-*.py[cod]	
+__pycache__/
+*.py[cod]
+*$py.class	
 
 #Django
 .log
+
+#Node
+node_modules/

@@ -12,7 +12,17 @@
         }
     </style>
 </head>
+{#<body onbeforeunload="return what()">#}
 <body>
+
+{% if user.is_authenticated %}
+        You are logged in as: {{ user.username }}
+        <a href="/server_management/accounts/logout">logout</a>
+    {% else %}
+        You are not logged in
+        <a href="/server_management/accounts/login">login</a>
+    {% endif %}
+
     {{ par1 }}
 
     <form id="send_command" method="post">
@@ -41,6 +51,11 @@
 
     <button type="button" onclick='deleteHistory()'>Delete old_data</button>
 
+    <button onclick="what()">DISCARD SOCKET</button>
+
+    <a href="/server_management" >BACK</a>
+
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -67,6 +82,19 @@
             document.cookie="old_data=;expires=Thu 01 Jan 1970 00:00:00; path=/;";
             location.reload();
         }
+    </script>
+    <script>
+         function  what() {
+             console.log("AAAAAAAAAAAA");
+             var request = new XMLHttpRequest();
+
+             request.open("POST", "",true);
+             request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+             request.send();
+
+             return "Write smthing";
+         }
+
     </script>
 
 </body>

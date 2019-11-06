@@ -9,17 +9,29 @@
 </head>
 <body>
 
+    {% if user.is_authenticated %}
+        You are logged in as: {{ user.username }}
+        <a href="/server_management/accounts/logout">logout</a>
+    {% else %}
+        You are not logged in
+        <a href="/server_management/accounts/login">login</a>
+    {% endif %}
+
     <table>
         <tr>
             <th>ServerName</th>
+            <th>Operacny system</th>
             <th>Server_ip</th>
             <th>Server port</th>
+            <th>Refresh rate</th>
         </tr>
         {% for data in data_from_db %}
             <tr>
                 <th><a href="server_call/{{ data.server_name }}">{{ data.server_name }}</a></th>
+                <th>{{ data.os }}</th>
                 <th>{{ data.server_ip }}</th>
                 <th>{{ data.server_port }}</th>
+                <th>{{ data.time_between_next_data_collection }}</th>
             </tr>
         {% endfor %}
     </table>
@@ -30,6 +42,6 @@
         </div>
     {% endfor %}
 
-<a href="server_data">SERVER_DATA</a>
+<a href="server_data/Martin250G6">SERVER_DATA</a>
 </body>
 </html>

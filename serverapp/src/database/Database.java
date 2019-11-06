@@ -13,7 +13,7 @@ public class Database {
     public static final String getMainData = "SELECT * FROM server_data";
     public static final String insertData = "INSERT INTO server_data VALUES (?,?,?,?,?,?)";
     public static final String serverExists = "SELECT * FROM server_info WHERE server_name = ?";
-    public static final String insertServerToDB = "INSERT INTO server_info VALUES (?,?,?,?)";
+    public static final String insertServerToDB = "INSERT INTO server_info VALUES (?,?,?,?,?,?)";
     public static final String updateIP = "UPDATE server_info SET server_ip = ? WHERE server_name = ?";
     public static final String updateServerInfo = "UPDATE server_info SET ? = ? WHERE ? = ?";
     public static final String checkLogin = "SELECT * FROM user_login WHERE username = ? AND password = ?";

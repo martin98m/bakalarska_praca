@@ -1,19 +1,16 @@
 package cmd;
 
 import java.io.*;
-import java.nio.Buffer;
 import java.util.ArrayList;
 
 public class CommandPromptWIN{
 
     private ArrayList<String> stdout;
     private ArrayList<String> stderr;
-    private BufferedWriter stdin;
 
+    void runCommand(String command, boolean needsCmd){
 
-    public void runCommand(String command, boolean needsCmd){
-
-        System.out.println("RUNNING COMMAND:"+command);
+//        System.out.println("RUNNING COMMAND:"+command);
         Process process;
         BufferedReader out;
         BufferedReader err;
@@ -22,7 +19,7 @@ public class CommandPromptWIN{
         stderr = new ArrayList<>();
         if(needsCmd) command = "cmd /c " + command;
         try {
-//todo handle error
+            //todo handle error
             process = Runtime.getRuntime().exec(command);
             out = new BufferedReader(new InputStreamReader(process.getInputStream()));
             err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -33,7 +30,6 @@ public class CommandPromptWIN{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                System.out.println(line);
                 stdout.add(line);
             }
             while (true) {
@@ -44,16 +40,12 @@ public class CommandPromptWIN{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                System.out.println(line);
                 stderr.add(line);
             }
             process.waitFor();
-//            System.out.println("eXIT: "+process.exitValue());
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("COMMAND OVER");
     }
 
 

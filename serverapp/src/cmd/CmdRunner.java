@@ -46,7 +46,6 @@ public class CmdRunner implements Runnable {
             while (process.isAlive()) {
                 try {
                     cmnd = in.readLine();
-                    //todo when clients disconnects
                     if(cmnd == null) {
                         System.out.println("ERROR reading null");
                         System.out.println(in.ready());
@@ -55,7 +54,6 @@ public class CmdRunner implements Runnable {
                     }
                     stdin.write(cmnd + "\n");
                     stdin.flush();
-//                        if (cmnd.equals("exit"))
                     Thread.sleep(10);
                 } catch (SocketException e){
                     process.destroy();

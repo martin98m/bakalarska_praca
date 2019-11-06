@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 
-public class ServerInfoDat {
+public class ServerMeasuredData {
 
     private String serverName;
     private int cpu;
@@ -15,7 +15,7 @@ public class ServerInfoDat {
     private Date date;
     private Time time;
 
-    public ServerInfoDat(String serverName, int cpu, int RAM,int RAM_max, Date date,Time time){
+    public ServerMeasuredData(String serverName, int cpu, int RAM, int RAM_max, Date date, Time time){
         this.serverName = serverName;
         this.cpu = cpu;
         this.RAM = RAM;
@@ -24,7 +24,7 @@ public class ServerInfoDat {
         this.time = time;
     }
 
-    public ServerInfoDat(String serverName,int cpu, int RAM, int RAM_max){
+    public ServerMeasuredData(String serverName, int cpu, int RAM, int RAM_max){
         this.serverName = serverName;
         this.cpu = cpu;
         this.RAM = RAM;
@@ -37,7 +37,7 @@ public class ServerInfoDat {
         this.time = time;
     }
 
-    public ServerInfoDat(ResultSet rs){
+    public ServerMeasuredData(ResultSet rs){
         try {
             this.serverName = rs.getString(1);
             this.cpu = rs.getInt(2);
@@ -50,25 +50,25 @@ public class ServerInfoDat {
         }
     }
 
-    public String getServerName() {
+    String getServerName() {
         return serverName;
     }
-    public int getCpu() {
+    int getCpu() {
         return cpu;
     }
-    public int getRAM() {
+    int getRAM() {
         return RAM;
     }
-    public int getRAM_max(){return RAM_max;}
-    public Date getDate() {
+    int getRAM_max(){return RAM_max;}
+    Date getDate() {
         return date;
     }
-    public Time getTime(){
+    Time getTime(){
         return time;
     }
 
     public String getString(){
-        return this.getServerName()+","+getCpu()+","+getRAM()+","+getRAM_max()+","+getDate()+","+getTime();
+        return "["+getServerName()+"|"+getCpu()+"|"+getRAM()+"|"+getRAM_max()+"|"+getDate()+"|"+getTime()+"]";
     }
 
 }

@@ -58,12 +58,29 @@ public class GatherSystemInformation extends OsInfoGathering {
         cmd.runCommand(ipconfig,false);
 
         //todo line.contains() may not work all the time
-        for (String line:cmd.getStdout()) {
+        for (String line : cmd.getStdout()) {
             if(line.contains("IPv4 Address. . . . .")){
                 line = line.substring(line.lastIndexOf(':')+2);
                 serverIP = line;
             }
         }
         return serverIP;
+    }
+
+    public String getSystemOs(){
+        String command = "systeminfo";
+        String system_os = null;
+
+        cmd.runCommand(command, false);
+        for(String line: cmd.getStdout()){
+            if(line.contains("OS Name:")){
+
+                line = line.substring(line.lastIndexOf(':')+1);
+                line = line.trim();
+                system_os = line;
+            }
+        }
+
+        return system_os;
     }
 }

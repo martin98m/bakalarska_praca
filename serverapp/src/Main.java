@@ -31,10 +31,10 @@ public class Main {
             public void run() {
                 while(true){
                     try {
-                        Thread.sleep(sleepBetweenMeasurement);//time set in First run
                         GatherSystemInformation g = new GatherSystemInformation();
                         g.gatherInformation();
                         g.sendDataToDatabase();
+                        Thread.sleep(sleepBetweenMeasurement);//time set in First run
 //                        setSleepTime(g.getServerName());
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -42,7 +42,7 @@ public class Main {
                 }
             }
         };
-//        collectInfo.start();
+        collectInfo.start();
 
     }
 

@@ -1,7 +1,7 @@
 package cmd;
 
 import database.Database;
-import database.ServerInfoDat;
+import database.ServerMeasuredData;
 
 public abstract class OsInfoGathering{
 
@@ -11,7 +11,7 @@ public abstract class OsInfoGathering{
     int CPU;
     int RAM;
     int totalRAM;
-    ServerInfoDat sid = null;
+    ServerMeasuredData sid = null;
 
     public void gatherInformation(){
         this.serverName = getServerName();
@@ -20,7 +20,7 @@ public abstract class OsInfoGathering{
         this.totalRAM = ram[0];
         this.RAM = ram[1];
 
-        sid = new ServerInfoDat(serverName,CPU,RAM,totalRAM);
+        sid = new ServerMeasuredData(serverName,CPU,RAM,totalRAM);
 
         System.out.println("GATHERED INFO :");
         System.out.println(sid.getString());
@@ -35,6 +35,7 @@ public abstract class OsInfoGathering{
     public int[] getServerRAM() {
         return new int[]{0};
     };
+//    public String getServerOs(){return null;}
 
     public void sendDataToDatabase(){
         if (sid == null) System.out.println("SID je null [cmd.OsInfoGathering.java:50]");

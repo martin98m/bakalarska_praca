@@ -59,7 +59,7 @@ def server_call(request, server_name):
     server_info = ServerInfo.objects.get(server_name__exact=server_name)
     fill.update({'server': server_info.server_ip, 'port': server_info.server_port})
     print(server_info.server_name, server_info.server_ip,
-          server_info.server_port, server_info.time_between_next_data_collection)
+          server_info.server_port, server_info.data_collection_delay_minutes)
     old = None
     navrat = None
 

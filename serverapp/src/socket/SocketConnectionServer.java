@@ -1,7 +1,6 @@
 package socket;
 
 import cmd.CmdRunner;
-import cmd.CommandPromptWIN;
 import cmd.GatherSystemInformation;
 import database.Database;
 
@@ -11,7 +10,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-//todo connect user to CMD
 //todo check if connection was from logged user(name+password)
 public class SocketConnectionServer {
 
@@ -22,10 +20,10 @@ public class SocketConnectionServer {
 
         ServerSocket server;
         try {
+            //creates new socket- par 0 means it will get any port that is available
             server = new ServerSocket(0);
             port = server.getLocalPort();
-            sendPortToDatabase();
-            System.out.println("Socket created and PORT updated in DB");
+            new Database().updateServerPort(new GatherSystemInformation().getServerName(), port);
 
             while (true){
                 System.out.println(server.getLocalSocketAddress()+"waiting for connections on port:"+port);
@@ -37,7 +35,6 @@ public class SocketConnectionServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("SERVER OVER");
     }
 
     //TODO currently reads messages sent from Python client
@@ -52,17 +49,9 @@ public class SocketConnectionServer {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            System.out.println("send username+password");
             String username = in.readLine();
             String password = in.readLine();
-            System.out.println("name:"+username);
-            System.out.println("pass"+password);
-            if(!correctLogin(username,password)){
-                System.out.println("incorrect username or password");
-                return;
-            }
-            else
-                System.out.println("login correct");
+            if(!correctLogin(username,password)) return;
 
             while (true) {
                 if (!clientSocket.isConnected()) {
@@ -71,9 +60,8 @@ public class SocketConnectionServer {
                     clientSocket.close();
                     break;
                 }
-                System.out.println("waiting for message");
                 fromClient = in.readLine();
-                System.out.println(clientSocket.getInetAddress().toString()+'|'+ clientSocket.getPort()+"|sent: " + fromClient);
+//                System.out.println(clientSocket.getInetAddress().toString()+'|'+ clientSocket.getPort()+"|sent: " + fromClient);
                 if(fromClient == null){
                     in.close();
                     out.close();
@@ -81,33 +69,10 @@ public class SocketConnectionServer {
                     System.out.println("DISCONNECT?");
                     break;
                 }
-                else if (fromClient.equals("EXIT2")) {
-                    in.close();
-                    out.close();
-                    clientSocket.close();
-                    System.out.println("socket closed");
-                    break;
-                }
-                else if(fromClient.equals("CONN")){
-                    ArrayList<String> msg = new ArrayList<>();
-                    msg.add(String.valueOf(numOfConnections));
-//                    out.println(numOfConnections);
-                    sendMessageToWebApp(out, msg);
-//                    System.out.println(numOfConnections);
-                }
-                else if(fromClient.equals("CHANGE")){
-                    System.out.println("CHANGE time_between_...");
-                }
                 else {
+                    //user is connected to command line on server
                     CmdRunner cmdRunner = new CmdRunner(in, out, fromClient);
-//                    CommandLineHandler cld = new CommandLineHandler(in, out, fromClient);
-//                    cld.run();
                     cmdRunner.run();
-//                    CommandPromptWIN cmd = new CommandPromptWIN();
-//                    cmd.runCommand(fromClient, true);
-//                    ArrayList<String> response = (cmd.getStderr().size() == 0) ? cmd.getStdout() : cmd.getStderr();
-                    System.out.println("OVER");
-//                    sendMessageToWebApp(out, response);
                 }
             }
         } catch (SocketException e){
@@ -120,22 +85,8 @@ public class SocketConnectionServer {
         }
         System.out.println("HANDLE EXITING");
         numOfConnections--;
-
     }
 
-    private void sendPortToDatabase(){
-        Database db = new Database();
-        ArrayList<Object> values = new ArrayList<>();
-        values.add(port);
-        values.add(new GatherSystemInformation().getServerName());
-
-        //todo remove print and add executeStatement
-        System.out.println("PORT UPDATED TO DB:"+values);
-
-        db.executeStatementNoReturnObjects(Database.updateServerPort,values);
-    }
-
-    //todo finish
     private boolean correctLogin(String username, String password){
 
         Database db = new Database();

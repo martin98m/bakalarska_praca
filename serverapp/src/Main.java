@@ -34,6 +34,14 @@ public class Main {
                         GatherSystemInformation g = new GatherSystemInformation();
                         g.gatherInformation();
                         g.sendDataToDatabase();
+
+                        String serverName = g.getServerName();
+                        ArrayList<String> values = new ArrayList<>();
+                        values.add(serverName);
+                        ArrayList<String> result = null;
+                        result = new Database().executeStatementWithReturn(Database.serverExists,values,6);//6 is num of columns in db(server_info)
+                        sleepBetweenMeasurement = Integer.parseInt(result.get(5))*60000;//5 is for sleep_between_measures *60000 is for millis
+
                         Thread.sleep(sleepBetweenMeasurement);//time set in First run
 //                        setSleepTime(g.getServerName());
                     } catch (InterruptedException e) {

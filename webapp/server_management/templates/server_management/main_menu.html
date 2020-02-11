@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" type="text/css" href="../../static/server_management/flexbox.css">
+</head>
+<body>
+<div class="grid-container">
+    <div class="header">
+        <div id="navbar">
+            <a class="active" href="/server_management/accounts/logout">Logout</a>
+            <a>S1</a>
+            <a>S2</a>
+            <a style="margin-right: 75%">Main Menu</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="flex-container">
+            {% for x in server_data_latest %}
+
+                <div class="server" onclick="location.href='server_data/{{ x.server_name }}'">
+                    {% if x.server_name is None %}
+                        name missing<br>
+                    {% else %}
+                        {{ x.server_name }}<br>
+                    {% endif %}
+
+                    {% if x.cpu_usage is None %}
+                        cpu_usage missing<br>
+                    {% else %}
+                        {{ x.cpu_usage }}<br>
+                    {% endif %}
+
+                    {% if x.ram_usage is None %}
+                        ram_usage missing<br>
+                    {% else %}
+                        {{ x.ram_usage }}<br>
+                    {% endif %}
+
+                    {% if x.date is None %}
+                        date missing<br>
+                    {% else %}
+                        {{ x.date }}<br>
+                    {% endif %}
+
+                    {% if x.time is None %}
+                        time missing<br>
+                    {% else %}
+                        {{ x.time }}<br>
+                    {% endif %}
+                </div>
+
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="side">
+        side
+    </div>
+
+</div>
+
+</body>
+</html>

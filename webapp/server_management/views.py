@@ -15,7 +15,7 @@ login_url = '/server_management/accounts/login'
 
 
 def logout_view(request):
-    print('CORRECT LOGOUT')
+    # print('CORRECT LOGOUT')
     logout(request)
     return HttpResponse(status=201)
 
@@ -35,25 +35,22 @@ class ServerInfoView(generic.ListView):
 
 @login_required(login_url=login_url)
 def data_view(request, server_name):
-    template_name = 'server_management/server_usage_data.html'
-    context_object_name = 'raw_data'
-    data = ServerData.objects.all().filter(server_name=server_name)
-    return render(request, template_name, {context_object_name: data})
+    template_name = 'server_management/server_data.html'
 
-# class ServerDataView(generic.ListView):
-#     template_name = 'server_management/server_usage_data.html'
-#     context_object_name = 'server_data_from_db'
-#
-    # def get_queryset(self):
-    #     return ServerData.objects.all()
+    context_server_data = 'server_data'
+    context_server_info = 'server_info'
+    s_data = ServerData.objects.all().filter(server_name=server_name)
+    s_info = ServerInfo.objects.all().filter(server_name=server_name)
+
+    return render(request, template_name, {context_server_data: s_data, context_server_info: s_info})
 
 
 # todo get cookie with username/password/id
 
 @login_required(login_url=login_url)
 def server_call(request, server_name):
-    print('LOGIN:' + request.user.username)
-    template_name = 'server_management/server_connection.html'
+    # print('LOGIN:' + request.user.username)
+    template_name = 'server_management/server_call.html'
     form = CommandForm()
     fill = {'par1': server_name, 'form': form}
     server_info = ServerInfo.objects.get(server_name__exact=server_name)
@@ -62,6 +59,12 @@ def server_call(request, server_name):
           server_info.server_port, server_info.data_collection_delay_minutes)
     old = None
     navrat = None
+    manager = SocketManager()
+    conn = manager.get_socket(request.user.username)
+    if conn is None:
+        print("Connection is not enstablished")
+    else:
+        print("Connection established")
 
     if 'old_data' in request.COOKIES:
         old = request.COOKIES['old_data']
@@ -69,10 +72,10 @@ def server_call(request, server_name):
         fill.update({'old_data': old})
 
     if request.method == 'POST':
-        print('POOOOOOST')
+        # print('POOOOOOST')
         form = CommandForm(request.POST)
         if form.is_valid():
-            print('VALID POOOST')
+            # print('VALID POOOST')
             manager = SocketManager()
             # print(manager)
             # manager.print_connections()
@@ -90,7 +93,7 @@ def server_call(request, server_name):
                 resp = connection.send_msg(data['command'])
             else:
                 resp = connection.send_message_with_response(data['command'])
-            print(resp)
+            # print(resp)
             # server.send_msg(data['command'])
 
             fill.update({'cmd': data['command']})
@@ -108,7 +111,7 @@ def server_call(request, server_name):
 
             navrat.set_cookie('old_data', old)
         else:
-            print("AAAAAAAAAAAAA")
+            # print("AAAAAAAAAAAAA")
             manager = SocketManager()
             manager.remove_socket(request.user.username)
 
@@ -117,3 +120,40 @@ def server_call(request, server_name):
 
     return navrat
 
+
+@login_required(login_url=login_url)
+def main_menu(request):
+    template_name = 'server_management/main_menu.html'
+
+    context_server_info = 'server_info'
+    context_server_data_latest = 'server_data_latest'
+
+    s_info = ServerInfo.objects.values('server_name')
+    # s_data_latest = ServerData.objects.all().filter().order_by('date')
+    # name_map = {'server_name': 'server_name', 'cpu_usage': 'cpu_usage', 'ram_usage': 'ram_usage', 'date': 'dare',
+    #             'time': 'time'}
+    # s_data_latest = ServerData.objects.raw('''SELECT t.server_name, t.CPU_usage, t.RAM_usage, t.date, t.time FROM
+    # server_data t INNER JOIN (SELECT server_name, max(date+time) as MaxDate from server_data GROUP BY server_name) tm
+    # ON t.server_name = tm.server_name AND t.date+t.time = tm.MaxDate''')
+    s_data_latest = ServerData.objects.raw('''SELECT t.server_name, t.CPU_usage, t.RAM_usage, t.date, t.time FROM server_data t
+INNER JOIN (
+    SELECT server_name, max(date+time) as MaxDate
+    from server_data
+    group by server_name
+    ) tm ON t.server_name = tm.server_name AND t.date+t.time = tm.MaxDate
+UNION
+SELECT server_name, NULL as CPU_usage, NULL as RAM_usage, NULL as date, NULL as time FROM server_info
+WHERE server_name NOT in
+      (SELECT t.server_name FROM server_data t
+        INNER JOIN (
+        SELECT server_name, max(date+time) as MaxDate
+        from server_data
+        group by server_name
+        ) tm ON t.server_name = tm.server_name AND t.date+t.time = tm.MaxDate
+    )''')
+
+    print(s_info)
+    # Person.objects.raw('SELECT * FROM some_other_table', translations=name_map)
+    # print(s_data_latest[1])
+
+    return render(request, template_name, {context_server_info: s_info, context_server_data_latest: s_data_latest})

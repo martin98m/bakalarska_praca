@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'server_management/table_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'server_management/Chart.min.css' %}">
+    <script src="{% static 'server_management/Chart.min.js' %}"></script>
+
+</head>
+<body>
+{% block loggedin %}
+    {% if user.is_authenticated %}
+        You are logged in as: {{ user.username }}
+        <a href="/server_management/accounts/logout">logout</a>
+    {% else %}
+        You are not logged in
+        <a href="/server_management/accounts/login">login</a>
+    {% endif %}
+{% endblock %}
+
+<table>
+    <tr>
+        <th>Server name</th>
+        <th>server nick</th>
+        <th>refresh rate</th>
+        <th>OS</th>
+        <th>Server IP</th>
+        <th>Server port</th>
+    </tr>
+    {% for info in server_info %}
+        <td>{{ info.server_name }}</td>
+        <td>{{ info.server_nickname }}</td>
+        <td>{{ info.data_collection_delay_minutes }}</td>
+        <td>{{ info.os }}</td>
+        <td>{{ info.server_ip }}</td>
+        <td>{{ info.server_port }}</td>
+    {% endfor %}
+</table>
+
+<table style="display: none">
+    <tr>
+        <th>Server_name</th>
+        <th>cpu</th>
+        <th>ram</th>
+        <th>date</th>
+        <th>time</th>
+    </tr>
+    {% for data in server_data %}
+        <tr>
+            <td>{{ data.server_name }}</td>
+            <td>{{ data.cpu_usage }}</td>
+            <td>{{ data.ram_usage }}</td>
+            <td>{{ data.date }}</td>
+            <td>{{ data.time }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<button onclick="removeData()">DELETE</button>
+<button onclick="updateData()">UPDATE</button>
+<a id="down">DOWNLOAD</a>
+<button onclick="getDownloadJSON()">LOG</button>
+{#<script>console.log(document.getElementById('myChart'))</script>#}
+<canvas id="myChart"></canvas>
+
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+
+    var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'CPU',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: []
+        },
+        {
+            label: 'RAM',
+            backgroundColor: 'rgb(30, 226, 30)',
+            borderColor: 'rgb(30, 142, 30)',
+            data: []
+        }
+        ]
+    },
+
+    // Configuration options go here
+    options: {}
+});
+
+    function removeData() {
+        {#console.log(chart);#}
+        chart.data.labels.pop();
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data.pop();
+        });
+        chart.update();
+    }
+
+    let labels = [];
+    let data_cpu = [];
+    let data_ram = [];
+
+    {% for date in server_data %}
+        labels.push('{{ date.time }}');
+        data_cpu.push({{ date.cpu_usage }});
+        data_ram.push({{ date.ram_usage }});
+    {% endfor %}
+
+    console.log(labels);
+    console.log(data_cpu);
+    console.log(data_ram);
+
+    function updateData() {
+        labels.forEach((x) => {
+            chart.data.labels.push(x);
+        });
+        data_cpu.forEach((x)=>{
+           chart.data.datasets[0].data.push(x);
+        });
+        data_ram.forEach((x)=>{
+           chart.data.datasets[1].data.push(x);
+        });
+        chart.update();
+    }
+
+    function getDownloadJSON(){
+        let data = [];
+        let row = {Server_name: null, cpu: null, ram: null};
+        {#data.push(row);#}
+        {#data.push(row);#}
+        {#console.log(data);#}
+//let row;
+        {% for x in server_data %}
+            row = {Server_name: null, cpu: null, ram: null};
+            row["Server_name"] = "{{ x.server_name }}";
+            row["cpu"] = {{ x.cpu_usage }};
+            row["ram"] = {{ x.ram_usage }};
+            console.log(row);
+            data.push(row);
+        {% endfor %}
+        console.log(data);
+
+        {#let obj = {a: 123, b: "4 5 6"};#}
+        let dataO = "text/json;charset=utf-8,"+ encodeURIComponent(JSON.stringify(data));
+        document.getElementById("down").setAttribute('href', "data:"+dataO)//download='data.json'";
+        document.getElementById("down").setAttribute('download', "data.json")//download='data.json'";
+
+    }
+
+
+</script>
+
+
+
+<a href="/server_management">MAIN MENU</a>
+{% for field in server_info %}
+<a href="/server_management/server_call/{{ field.server_name }}">CALL SERVER</a>
+{% endfor %}
+</body>
+</html>

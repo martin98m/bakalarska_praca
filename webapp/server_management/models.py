@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 
 class ServerData(models.Model):
     server_name = models.CharField(max_length=255, primary_key=True)
@@ -37,3 +35,11 @@ class UserLogin(models.Model):
         managed = False
         db_table = 'user_login'
 
+
+class UserCommands(models.Model):
+    username = models.CharField(max_length=255, primary_key=True)
+    command = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'user_commands'

@@ -9,13 +9,12 @@ from django.views import generic
 
 from server_management.SocketConnectionToServer.SocketManager import SocketManager
 from server_management.forms import CommandForm
-from .models import ServerInfo, ServerData
+from .models import ServerInfo, ServerData, UserCommands
 
 login_url = '/server_management/accounts/login'
 
 
 def logout_view(request):
-    # print('CORRECT LOGOUT')
     logout(request)
     return HttpResponse(status=201)
 
@@ -49,18 +48,25 @@ def data_view(request, server_name):
 
 @login_required(login_url=login_url)
 def server_call(request, server_name):
-    # print('LOGIN:' + request.user.username)
+
     template_name = 'server_management/server_call.html'
     form = CommandForm()
     fill = {'par1': server_name, 'form': form}
+
     server_info = ServerInfo.objects.get(server_name__exact=server_name)
     fill.update({'server': server_info.server_ip, 'port': server_info.server_port})
+
+    print('hello')
+    user_commands = UserCommands.objects.all().filter(username=request.user.username)
+    fill.update({'commands': user_commands})
+    print(user_commands)
+
     print(server_info.server_name, server_info.server_ip,
           server_info.server_port, server_info.data_collection_delay_minutes)
     old = None
     navrat = None
     manager = SocketManager()
-    conn = manager.get_socket(request.user.username)
+    conn = manager.get_socket(request.user.username, server_name)
     if conn is None:
         print("Connection is not enstablished")
     else:
@@ -72,19 +78,14 @@ def server_call(request, server_name):
         fill.update({'old_data': old})
 
     if request.method == 'POST':
-        # print('POOOOOOST')
         form = CommandForm(request.POST)
         if form.is_valid():
-            # print('VALID POOOST')
             manager = SocketManager()
-            # print(manager)
-            # manager.print_connections()
-            connection = manager.get_socket(request.user.username)
-            # connection = None
+            connection = manager.get_socket(request.user.username, server_name)
             if connection is None:
-                connection = manager.add_socket(request.user.username, server_info.server_ip, server_info.server_port)
+                connection = manager.add_socket(request.user.username, server_name, server_info.server_ip, server_info.server_port)
 
-            manager.print_connections()
+            # manager.print_connections()
             if connection.is_connected() is False:
                 connection.connect()
 
@@ -93,17 +94,10 @@ def server_call(request, server_name):
                 resp = connection.send_msg(data['command'])
             else:
                 resp = connection.send_message_with_response(data['command'])
-            # print(resp)
-            # server.send_msg(data['command'])
 
             fill.update({'cmd': data['command']})
             fill.update({'response': resp})
             navrat = render(request, template_name, fill)
-            # print('OLD')
-            # print(type(old))
-            # print('NEW')
-            # print(resp)
-            # print(type(resp))
             if old is None:
                 old = resp
             else:
@@ -111,9 +105,8 @@ def server_call(request, server_name):
 
             navrat.set_cookie('old_data', old)
         else:
-            # print("AAAAAAAAAAAAA")
             manager = SocketManager()
-            manager.remove_socket(request.user.username)
+            manager.remove_socket(request.user.username, server_name)
 
     else:
         navrat = render(request, template_name, fill)
@@ -125,16 +118,24 @@ def server_call(request, server_name):
 def main_menu(request):
     template_name = 'server_management/main_menu.html'
 
+    if request.method == 'POST':
+        print('MAIN MENU POST')
+        server_name = request.POST.get('server_name')
+        print(server_name)
+        SocketManager().remove_socket(request.user.username, server_name)
+
     context_server_info = 'server_info'
     context_server_data_latest = 'server_data_latest'
+    context_server_conn = 'server_conn'
 
     s_info = ServerInfo.objects.values('server_name')
-    # s_data_latest = ServerData.objects.all().filter().order_by('date')
-    # name_map = {'server_name': 'server_name', 'cpu_usage': 'cpu_usage', 'ram_usage': 'ram_usage', 'date': 'dare',
-    #             'time': 'time'}
-    # s_data_latest = ServerData.objects.raw('''SELECT t.server_name, t.CPU_usage, t.RAM_usage, t.date, t.time FROM
-    # server_data t INNER JOIN (SELECT server_name, max(date+time) as MaxDate from server_data GROUP BY server_name) tm
-    # ON t.server_name = tm.server_name AND t.date+t.time = tm.MaxDate''')
+
+    rest = SocketManager().get_connections_for(request.user.username)
+    res = []
+    if rest is not None:
+        for x in rest:
+            res.append(x)
+
     s_data_latest = ServerData.objects.raw('''SELECT t.server_name, t.CPU_usage, t.RAM_usage, t.date, t.time FROM server_data t
 INNER JOIN (
     SELECT server_name, max(date+time) as MaxDate
@@ -152,8 +153,8 @@ WHERE server_name NOT in
         ) tm ON t.server_name = tm.server_name AND t.date+t.time = tm.MaxDate
     )''')
 
-    print(s_info)
+    # print(s_info)
     # Person.objects.raw('SELECT * FROM some_other_table', translations=name_map)
     # print(s_data_latest[1])
 
-    return render(request, template_name, {context_server_info: s_info, context_server_data_latest: s_data_latest})
+    return render(request, template_name, {context_server_info: s_info, context_server_data_latest: s_data_latest, context_server_conn: res})

@@ -2,18 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Server Management</title>
 
-    <link rel="stylesheet" type="text/css" href="../../static/server_management/flexbox.css">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static "server_management/main_menu.css" %}">
+
 </head>
 <body>
 <div class="grid-container">
+    <div class="page">
+        <div class="pageName">
+            <a>Main Menu</a>
+        </div>
+    </div>
     <div class="header">
-        <div id="navbar">
-            <a class="active" href="/server_management/accounts/logout">Logout</a>
-            <a>S1</a>
-            <a>S2</a>
-            <a style="margin-right: 75%">Main Menu</a>
+        <div class="navbar">
+            <div class="serverConnect">item1</div>
+            <div class="serverConnect">item2</div>
+            <a class="logout" href="/server_management/accounts/logout">Logout</a>
+                {% for server in server_conn %}
+                    <div class="serverConnect">
+                        <a href="/server_management/server_call/{{ server }}">{{ server }}</a>
+{#                    <form method="post">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden" name="server_name" value="{{ server }}">#}
+{#                        <input type="submit" value="X">#}
+{#                    </form>#}
+                    </div>
+                {% endfor %}
         </div>
     </div>
 
@@ -22,35 +38,44 @@
             {% for x in server_data_latest %}
 
                 <div class="server" onclick="location.href='server_data/{{ x.server_name }}'">
-                    {% if x.server_name is None %}
-                        name missing<br>
-                    {% else %}
-                        {{ x.server_name }}<br>
-                    {% endif %}
+                    <div class="shownStatForServerName">
+                        {% if x.server_name is None %}
+                            name missing<br>
+                        {% else %}
+                            {{ x.server_name }}<br>
+                        {% endif %}
+                    </div>
 
-                    {% if x.cpu_usage is None %}
-                        cpu_usage missing<br>
-                    {% else %}
-                        {{ x.cpu_usage }}<br>
-                    {% endif %}
+                    <div class="shownStatForCpu">
+                        {% if x.cpu_usage is None %}
+                            cpu_usage missing
+                        {% else %}
+                            {{ x.cpu_usage }}
+                        {% endif %}
+                    </div>
+                    <div class="shownStatForRam">
+                        {% if x.ram_usage is None %}
+                            ram_usage missing<br>
+                        {% else %}
+                            {{ x.ram_usage }}<br>
+                        {% endif %}
+                    </div>
 
-                    {% if x.ram_usage is None %}
-                        ram_usage missing<br>
-                    {% else %}
-                        {{ x.ram_usage }}<br>
-                    {% endif %}
+                    <div class="shownStatForDate">
+                        {% if x.date is None %}
+                            date missing<br>
+                        {% else %}
+                            {{ x.date }}<br>
+                        {% endif %}
+                    </div>
 
-                    {% if x.date is None %}
-                        date missing<br>
-                    {% else %}
-                        {{ x.date }}<br>
-                    {% endif %}
-
-                    {% if x.time is None %}
-                        time missing<br>
-                    {% else %}
-                        {{ x.time }}<br>
-                    {% endif %}
+                    <div class="shownStatForTime">
+                        {% if x.time is None %}
+                            time missing<br>
+                        {% else %}
+                            {{ x.time }}<br>
+                        {% endif %}
+                    </div>
                 </div>
 
             {% endfor %}
@@ -58,10 +83,45 @@
     </div>
 
     <div class="side">
-        side
+        <div class="sidebar">
+            <a class="sidebarContentA" onclick="sortByCpuLowHigh()">CPU_L_H</a>
+            <a class="sidebarContentA" onclick="sortByCpuHighLow()">CPU_H_L</a>
+
+            <div class="sidebarContentB">
+                <a style="opacity: 0"></a>
+                <a>CPU</a>
+                <label class="switch">
+                    <input type="checkbox"  checked="true" name="checkbox1" onclick="updateShowedData('1','Cpu')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="sidebarContentB">
+                <a style="opacity: 0"></a>
+                <a>RAM</a>
+                <label class="switch">
+                    <input type="checkbox"  checked="true" name="checkbox2" onclick="updateShowedData('2', 'Ram')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="sidebarContentB" id="setTime">
+                <a style="opacity: 0"></a>
+                <a>TIME</a>
+                <label class="switch">
+                    <input type="checkbox" checked="true" name="checkbox3" onclick="updateShowedData('3','Time')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            </div>
+        </div>
     </div>
 
 </div>
 
+{#<script src="../../static/server_management/main_menu_sorting.js"></script>#}
+{% load static %}
+<script src="{% static "server_management/main_menu_sorting.js"%}"></script>
 </body>
 </html>

@@ -3,47 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <style>
-        pre{
-            background: black;
-            color: aliceblue;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-    </style>
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static "/server_management/server_call_style.css" %}">
+{#    <script src="{% static "/server_management/server_call.js" %}"></script>#}
+
 </head>
 {#<body onbeforeunload="return what()">#}
 <body>
+<div class="grid-container">
+    <div class="header">
+        <div class="headerContent">
+            <a>serverName</a>
+            <a>restart</a>
+            <a>disconnect</a>
+            <a>main menu</a>
+            <a href="/server_management/accounts/logout">logout</a>
+        </div>
 
-{% if user.is_authenticated %}
-        You are logged in as: {{ user.username }}
-        <a href="/server_management/accounts/logout">logout</a>
-    {% else %}
-        You are not logged in
-        <a href="/server_management/accounts/login">login</a>
-    {% endif %}
 
-    {{ par1 }}
-
-    <form id="send_command" method="post">
-        {% csrf_token %}
-{#        {{ form.as_p }}#}
-        <input name="command">
-        <button type="submit">Submit</button>
-    </form>
-    {{ cmd }}
-
-{#    <ul>#}
-{#    {% for x in response %}#}
-{#        <li>{{ x }}</li>#}
-{#    {% endfor %}#}
-{#    </ul>#}
-    <div>
+    </div>
+    <div class="console">
         <pre id="scroll" >
             {% for a in old_data %}{{ a }}{% endfor %}
             {% for x in response %}{{ x }}{% endfor %}
         </pre>
     </div>
+
+    <div class="commands">
+        <table id="tableGlobal">
+            <tr>
+                <th style="background-color: red" onclick="showTable('Global')">global</th>
+                <th onclick="showTable('User')">user</th>
+                <th onclick="showTable('Used')">used</th>
+            </tr>
+            <tr>
+                <td colspan="3">itemA</td>
+            </tr>
+            <tr>
+                <td colspan="3">itemC</td>
+            </tr>
+            <tr>
+                <td colspan="3">itemD</td>
+            </tr>
+        </table>
+        <table id="tableUser">
+            <tr>
+                <th onclick="showTable('Global')">global</th>
+                <th style="background-color: red" onclick="showTable('User')">user</th>
+                <th onclick="showTable('Used')">used</th>
+            </tr>
+            <tr>
+                <td colspan="3">newA</td>
+            </tr>
+            <tr>
+                <td colspan="3">newB</td>
+            </tr>
+            <tr>
+                <td colspan="3">newC</td>
+            </tr>
+            <tr>
+                <td colspan="3">newD</td>
+            </tr>
+        </table>
+        <table id="tableUsed">
+            <tr>
+                <th onclick="showTable('Global')">global</th>
+                <th onclick="showTable('User')">user</th>
+                <th style="background-color: red" onclick="showTable('Used')">used</th>
+            </tr>
+            {% for com in commands %}
+                <tr>
+                    <td colspan="3">{{ com.command }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="confirm">
+        <form id="send_command" method="post">
+            {% csrf_token %}
+    {#        {{ form.as_p }}#}
+            <input name="command" id="inputCommand">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div class="learn">
+        <form id="learn_command" method="post">
+            {% csrf_token %}
+            <input name="command">
+            <button type="submit">Save Command</button>
+        </form>
+    </div>
+</div>
+
 
     <button onclick="alert('You clicked the button using JS')">Click me!</button>
 
@@ -96,6 +150,34 @@
          }
 
     </script>
+
+<script>
+    function getCookie(name) {
+        let value = "; " + document.cookie;
+        let parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+    const st = document.getElementById('tableUser').style;
+    let name = getCookie('table');
+    if (name != null)
+        showTable(name);
+    else
+        showTable('Global');
+
+
+    function showTable(table) {
+        document.getElementById('tableGlobal').style.display = 'none';
+        document.getElementById('tableUser').style.display = 'none';
+        document.getElementById('tableUsed').style.display = 'none';
+
+        document.getElementById('table'+table).style = st;
+
+        document.cookie = 'table='+table+';'
+    }
+
+</script>
+
+<script src="{% static "server_management/server_call.js" %}"></script>
 
 </body>
 </html>

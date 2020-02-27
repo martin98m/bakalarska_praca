@@ -1,28 +1,63 @@
-body{
-    margin: 0;
-    padding: 0;
-    background-color: #1f283f;
-}
 pre{
     background: black;
     color: aliceblue;
-    /*max-height: 500px;*/
-    overflow-y: auto;
+    /*color: white;*/
 }
 
 .grid-container{
     display: grid;
     grid-template-areas:
-            'header header'
+            'control header'
             'console commands'
             'confirm learn';
     grid-template-columns: auto 30vw;
     grid-template-rows: 50px calc(100vh - 150px) 100px;
 }
+/*CONTROL*/
+.control{
+    grid-area: control;
+    height: 50px;
+
+    display: flex;
+    justify-content: space-between;
+    padding-right: 5px;
+
+    background-color: #1f2833;
+    color: #66fcf1;
+
+    border: 1px solid red;
+}
+.controlName{
+    height: inherit;
+    width: 100px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding-left: 10px;
+
+    font-size: 20px;
+}
+
+.controlContent{
+    height: inherit;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    padding-right: 5px;
+}
+/*END OF CONTROL*/
 /*HEADER*/
 .header{
     grid-area: header;
     height: 50px;
+
+    background-color: #1f2833;
+
+    border: 1px solid green;
 }
 .headerContent{
     height: inherit;
@@ -31,29 +66,46 @@ pre{
     justify-content: flex-end;
     align-items: center;
 }
-
+/*END HEADER*/
 /*CONSOLE*/
 .console{
     grid-area: console;
+    background-color: black;
 
     /*height: calc(100vh - 150px);*/
-    overflow-y: auto;
-}
+    overflow: auto;
 
+    border: 1px solid green;
+}
+/*END CONSOLE*/
+/*COMMANDS*/
 .commands{
     grid-area: commands;
+    background-color: #c5c6c7;
 
     /*height: calc(100vh - 150px);*/
     overflow-y: auto;
-}
 
+    font-size: 20px;
+    border: 1px solid red;
+}
+/*END COMMANDS*/
+/*CONFIRM*/
 .confirm{
     grid-area: confirm;
     height: 100px;
+
+    border: 1px solid red;
 }
+/*END CONFIRM*/
+/*LEARN*/
 .learn{
     grid-area: learn;
+    height: 100px;
+
+    border: 1px solid green;
 }
+/*END LEARN*/
 
 table,th,td {
     border: 1px solid black;
@@ -64,4 +116,17 @@ table{
 td:hover{
     background-color: green;
     color: red;
+}
+
+.indicator{
+    width: 30px;
+    height: 30px;
+
+}
+.connected{
+    background-color: green;
+}
+
+.disconnected{
+    background-color: red;
 }

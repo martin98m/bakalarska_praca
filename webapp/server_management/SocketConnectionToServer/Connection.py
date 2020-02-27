@@ -22,8 +22,13 @@ class ServerConnection:
             self.sock.sendall(b"admin\n")  # todo change
             self.sock.sendall(b"admin\n")
             self.connected = True
+            print('SOCKET?CONNECT?SUCCESSFUL')
         except ConnectionError:
+            self.connected = False
             print(ConnectionError)
+        except socket.error:
+            self.connected = False
+            print('SOCKET_TIMEOUT_ERROR')
 
     def is_connected(self):
         return self.connected

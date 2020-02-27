@@ -17,7 +17,6 @@ body{
 
     background-color: #1f2833;
     color: #66fcf1;
-    /*border: 1px solid pink;*/
 }
 
 .header{
@@ -51,51 +50,6 @@ body{
     justify-content: flex-end;
     align-items: center;
 }
-
-.logout{
-    width: 70px;
-
-    display: flex;
-    justify-content: center;
-
-    margin-right: 3px;
-    padding: 10px 5px 10px 0;
-
-    background-color: #0b0c10;
-
-    text-decoration: none;
-}
-.logout:visited, .logout:link{
-    text-decoration: none;
-    color: #66fcf1;
-}
-.logout:hover{
-    background-color: red;
-    color: black;
-
-    cursor: pointer;
-}
-
-
-
-.serverConnect{
-    width: 70px;
-
-    display: flex;
-    justify-content: center;
-
-    margin-right: 3px;
-    padding: 10px 5px 10px 0;
-    background-color: #1f283f;
-    border: 1px solid black;
-}
-.serverConnect:hover{
-    background-color: #c5c6c7;
-    color: black;
-
-    cursor: pointer;
-}
-
 
 /*end of navbar*/
 

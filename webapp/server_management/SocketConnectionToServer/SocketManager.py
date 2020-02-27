@@ -43,9 +43,6 @@ class SocketManager:
         print("DISCONNECTED SOCKET")
         self.instance.list_of_connections[name].pop(server_name)
 
-    # def num_of_connections(self):
-    #     return len(self.instance.list_of_connections)
-
     def print_connections(self):
         # print(self.instance.list_of_connections['admin'])
         for name in self.instance.list_of_connections.items():

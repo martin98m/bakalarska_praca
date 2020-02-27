@@ -1,0 +1,52 @@
+body{
+    margin: 0;
+    padding: 0;
+    background-color: #1f283f;
+}
+
+.buttonMain{
+    width: 80px;
+    height: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-right: 15px;
+    background-color: #1f283f;
+    border: 1px solid black;
+    color: #66fcf1;
+}
+
+.buttonMain:hover{
+    background-color: #c5c6c7;
+    color: black;
+
+    cursor: pointer;
+}
+
+.logout{
+    width: 70px;
+    height: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-right: 3px;
+
+    background-color: #0b0c10;
+
+    font-size: 18px;
+    text-decoration: none;
+}
+.logout:visited, .logout:link{
+    text-decoration: none;
+    color: #66fcf1;
+}
+.logout:hover{
+    background-color: red;
+    color: black;
+
+    cursor: pointer;
+}

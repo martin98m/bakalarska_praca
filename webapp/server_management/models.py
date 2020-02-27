@@ -38,7 +38,8 @@ class UserLogin(models.Model):
 
 class UserCommands(models.Model):
     username = models.CharField(max_length=255, primary_key=True)
-    command = models.CharField(max_length=255)
+    target = models.CharField(max_length=255)
+    commandsave = models.CharField(max_length=255)
 
     class Meta:
         managed = False

@@ -5,6 +5,7 @@
     <title>Server Management</title>
 
     {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static "server_management/global_styles.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "server_management/main_menu.css" %}">
 
 </head>
@@ -17,19 +18,14 @@
     </div>
     <div class="header">
         <div class="navbar">
-            <div class="serverConnect">item1</div>
-            <div class="serverConnect">item2</div>
-            <a class="logout" href="/server_management/accounts/logout">Logout</a>
+            <div class="buttonMain">item1</div>
+            <div class="buttonMain">item2</div>
                 {% for server in server_conn %}
-                    <div class="serverConnect">
+                    <div class="buttonMain">
                         <a href="/server_management/server_call/{{ server }}">{{ server }}</a>
-{#                    <form method="post">#}
-{#                        {% csrf_token %}#}
-{#                        <input type="hidden" name="server_name" value="{{ server }}">#}
-{#                        <input type="submit" value="X">#}
-{#                    </form>#}
                     </div>
                 {% endfor %}
+            <a class="logout" href="/server_management/accounts/logout">Logout</a>
         </div>
     </div>
 

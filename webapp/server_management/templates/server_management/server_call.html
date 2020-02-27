@@ -5,28 +5,42 @@
     <title>Title</title>
 
     {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static "/server_management/global_styles.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "/server_management/server_call_style.css" %}">
 {#    <script src="{% static "/server_management/server_call.js" %}"></script>#}
 
 </head>
-{#<body onbeforeunload="return what()">#}
 <body>
 <div class="grid-container">
-    <div class="header">
-        <div class="headerContent">
-            <a>serverName</a>
-            <a>restart</a>
-            <a>disconnect</a>
-            <a>main menu</a>
-            <a href="/server_management/accounts/logout">logout</a>
+
+    <div class="control">
+        <div class="controlName">
+            <a>{{ server_name }}</a>
         </div>
 
+        <div class="controlContent">
+            <a class="buttonMain">clear</a>
+            <a class="buttonMain">restart</a>
+            <a class="buttonMain" onclick="disconnectSocket()">disconnect</a>
+            {% if connection  == True %}
+                <div class="indicator connected" title="Connected to {{ server_name }}"></div>
+            {% else %}
+                <div class="indicator disconnected" title="Disconnected from {{ server_name }}"></div>
+            {% endif %}
 
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="headerContent">
+            <a class="buttonMain">main menu</a>
+            <a class="logout" href="/server_management/accounts/logout">logout</a>
+        </div>
     </div>
     <div class="console">
         <pre id="scroll" >
-            {% for a in old_data %}{{ a }}{% endfor %}
-            {% for x in response %}{{ x }}{% endfor %}
+            {% for a in cmd_history %}{{ a }}{% endfor %}
+{#            {% for x in response %}{{ x }}{% endfor %}#}
         </pre>
     </div>
 
@@ -37,15 +51,11 @@
                 <th onclick="showTable('User')">user</th>
                 <th onclick="showTable('Used')">used</th>
             </tr>
-            <tr>
-                <td colspan="3">itemA</td>
-            </tr>
-            <tr>
-                <td colspan="3">itemC</td>
-            </tr>
-            <tr>
-                <td colspan="3">itemD</td>
-            </tr>
+            {% for global in global_commands %}
+                <tr>
+                    <td colspan="3">{{ global.commandsave }}</td>
+                </tr>
+            {% endfor %}
         </table>
         <table id="tableUser">
             <tr>
@@ -53,18 +63,11 @@
                 <th style="background-color: red" onclick="showTable('User')">user</th>
                 <th onclick="showTable('Used')">used</th>
             </tr>
-            <tr>
-                <td colspan="3">newA</td>
-            </tr>
-            <tr>
-                <td colspan="3">newB</td>
-            </tr>
-            <tr>
-                <td colspan="3">newC</td>
-            </tr>
-            <tr>
-                <td colspan="3">newD</td>
-            </tr>
+            {% for user in user_commands %}
+                <tr>
+                    <td colspan="3">{{ user.commandsave }}</td>
+                </tr>
+            {% endfor %}
         </table>
         <table id="tableUsed">
             <tr>
@@ -72,9 +75,9 @@
                 <th onclick="showTable('User')">user</th>
                 <th style="background-color: red" onclick="showTable('Used')">used</th>
             </tr>
-            {% for com in commands %}
+            {% for com in command %}
                 <tr>
-                    <td colspan="3">{{ com.command }}</td>
+                    <td colspan="3">{{ com }}</td>
                 </tr>
             {% endfor %}
         </table>
@@ -83,7 +86,6 @@
     <div class="confirm">
         <form id="send_command" method="post">
             {% csrf_token %}
-    {#        {{ form.as_p }}#}
             <input name="command" id="inputCommand">
             <button type="submit">Submit</button>
         </form>
@@ -92,55 +94,25 @@
     <div class="learn">
         <form id="learn_command" method="post">
             {% csrf_token %}
-            <input name="command">
+            <input name="commandSave">
+
+            <input type="radio" id="target1" name="target" value="global">
+            <label for="target1">Global</label>
+
+            <input type="radio" id="target2" name="target" value="user" checked>
+            <label for="target2">User</label>
             <button type="submit">Save Command</button>
         </form>
     </div>
 </div>
 
+{#    <button onclick="what()">DISCARD SOCKET</button>#}
 
-    <button onclick="alert('You clicked the button using JS')">Click me!</button>
+<script src="{% static "server_management/server_call.js" %}"></script>
 
-    <button id ="about">Click me, too!</button>
-
-    <button type="button" onclick='deleteHistory()'>Delete old_data</button>
-
-    <button onclick="what()">DISCARD SOCKET</button>
-
-    <a href="/server_management" >BACK</a>
-
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            console.log("jquery ide");
-            $("#about").click(function (event) {
-                alert("You just used JQUERY");
-            })
-        });
-        console.log("Hello");
-    </script>
-    <script>
-        function scrollToBottom() {
-            var obj = document.getElementById("scroll");
-            console.log(obj);
-            console.log(obj.scrollTop);
-            console.log(obj.scrollHeight);
-            obj.scrollTop = obj.scrollHeight;
-            console.log(obj.scrollTop);
-        }
-        scrollToBottom();
-    </script>
-    <script>
-        function deleteHistory() {
-            document.cookie="old_data=;expires=Thu 01 Jan 1970 00:00:00; path=/;";
-            location.reload();
-        }
-    </script>
-    <script>
-         function  what() {
-             console.log("AAAAAAAAAAAA");
-             var request = new XMLHttpRequest();
+<script>
+         function  disconnectSocket() {
+             let request = new XMLHttpRequest();
 
              request.open("POST", "",true);
              request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
@@ -151,33 +123,6 @@
 
     </script>
 
-<script>
-    function getCookie(name) {
-        let value = "; " + document.cookie;
-        let parts = value.split("; " + name + "=");
-        if (parts.length == 2) return parts.pop().split(";").shift();
-    }
-    const st = document.getElementById('tableUser').style;
-    let name = getCookie('table');
-    if (name != null)
-        showTable(name);
-    else
-        showTable('Global');
-
-
-    function showTable(table) {
-        document.getElementById('tableGlobal').style.display = 'none';
-        document.getElementById('tableUser').style.display = 'none';
-        document.getElementById('tableUsed').style.display = 'none';
-
-        document.getElementById('table'+table).style = st;
-
-        document.cookie = 'table='+table+';'
-    }
-
-</script>
-
-<script src="{% static "server_management/server_call.js" %}"></script>
 
 </body>
 </html>

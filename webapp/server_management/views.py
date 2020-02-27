@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.views import generic
 
 from server_management.SocketConnectionToServer.SocketManager import SocketManager
-from server_management.forms import CommandForm
+from server_management.forms import CommandForm, CommandSave
 from .models import ServerInfo, ServerData, UserCommands
 
 login_url = '/server_management/accounts/login'
@@ -50,79 +50,84 @@ def data_view(request, server_name):
 def server_call(request, server_name):
 
     template_name = 'server_management/server_call.html'
-    form = CommandForm()
-    fill = {'par1': server_name, 'form': form}
+
+    context_server_name = 'server_name'
+    fill = ({context_server_name: server_name})
+
+    context_global_commands = 'global_commands'
+    context_user_commands = 'user_commands'
+    context_used_commands = 'used_commands'
+
+    context_cmd_history = 'cmd_history'
+    context_server_connection = 'connection'
 
     server_info = ServerInfo.objects.get(server_name__exact=server_name)
-    fill.update({'server': server_info.server_ip, 'port': server_info.server_port})
 
-    print('hello')
-    user_commands = UserCommands.objects.all().filter(username=request.user.username)
-    fill.update({'commands': user_commands})
-    print(user_commands)
+    connection = SocketManager().get_socket(request.user.username, server_name)
 
-    print(server_info.server_name, server_info.server_ip,
-          server_info.server_port, server_info.data_collection_delay_minutes)
-    old = None
-    navrat = None
-    manager = SocketManager()
-    conn = manager.get_socket(request.user.username, server_name)
-    if conn is None:
-        print("Connection is not enstablished")
-    else:
-        print("Connection established")
-
-    if 'old_data' in request.COOKIES:
-        old = request.COOKIES['old_data']
-        old = ast.literal_eval(old)
-        fill.update({'old_data': old})
+    cmd_content = None
+    if 'cmd_history' in request.COOKIES:
+        cmd_content = request.COOKIES['cmd_history']
+        cmd_content = ast.literal_eval(cmd_content)
 
     if request.method == 'POST':
-        form = CommandForm(request.POST)
-        if form.is_valid():
-            manager = SocketManager()
-            connection = manager.get_socket(request.user.username, server_name)
+
+        form_a = CommandForm(request.POST)
+        form_b = CommandSave(request.POST)
+        if form_a.is_valid():
+            print('POST1')
             if connection is None:
-                connection = manager.add_socket(request.user.username, server_name, server_info.server_ip, server_info.server_port)
+                connection = SocketManager()\
+                    .add_socket(request.user.username, server_name, server_info.server_ip, server_info.server_port)
 
-            # manager.print_connections()
-            if connection.is_connected() is False:
-                connection.connect()
-
-            data = form.cleaned_data
-            if data['command'] == 'CHANGE':
-                resp = connection.send_msg(data['command'])
-            else:
+            connection.connect()
+            data = form_a.cleaned_data
+            if connection.is_connected():
                 resp = connection.send_message_with_response(data['command'])
+                if cmd_content is not None: cmd_content = cmd_content + resp
 
-            fill.update({'cmd': data['command']})
-            fill.update({'response': resp})
-            navrat = render(request, template_name, fill)
-            if old is None:
-                old = resp
-            else:
-                old = old + resp
+            fill.update({context_cmd_history: cmd_content})
 
-            navrat.set_cookie('old_data', old)
+        elif form_b.is_valid():
+            print('POST2')
+            data = form_b.cleaned_data
+
+            print(data['target'], data['commandSave'])
+            UserCommands.objects\
+                .create(username=request.user.username, target=data['target'], commandsave=data['commandSave'])
+
         else:
-            manager = SocketManager()
-            manager.remove_socket(request.user.username, server_name)
+            print('POST3')
+            if connection is not None and connection.is_connected() is True:
+                connection.disconnect()
 
+    global_commands = UserCommands.objects.all().filter(target='global')
+    fill.update({context_global_commands: global_commands})
+
+    user_commands = UserCommands.objects.all().filter(username=request.user.username, target='user')
+    fill.update({context_user_commands: user_commands})
+    if connection is None:
+        fill.update({context_server_connection: False})
+    elif connection.is_connected():
+        fill.update({context_server_connection: True})
     else:
-        navrat = render(request, template_name, fill)
+        fill.update({context_server_connection: False})
 
-    return navrat
+    response = render(request, template_name, fill)
+    response.set_cookie('cmd_history', cmd_content)
+
+    return response
 
 
 @login_required(login_url=login_url)
 def main_menu(request):
     template_name = 'server_management/main_menu.html'
 
-    if request.method == 'POST':
-        print('MAIN MENU POST')
-        server_name = request.POST.get('server_name')
-        print(server_name)
-        SocketManager().remove_socket(request.user.username, server_name)
+    # if request.method == 'POST':
+    #     print('MAIN MENU POST')
+    #     server_name = request.POST.get('server_name')
+    #     print(server_name)
+    #     SocketManager().remove_socket(request.user.username, server_name)
 
     context_server_info = 'server_info'
     context_server_data_latest = 'server_data_latest'

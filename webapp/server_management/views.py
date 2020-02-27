@@ -49,6 +49,18 @@ def data_view(request, server_name):
 @login_required(login_url=login_url)
 def server_call(request, server_name):
 
+    used_commands = None
+    cookie_string = None
+    if 'used_commands' in request.COOKIES:
+        cookie_string = request.COOKIES['used_commands']
+        # print(cookie_string.split('-'))
+        used_commands = cookie_string.split('-')
+        for x in used_commands:
+            if len(x) is 0:
+                used_commands.remove(x)
+
+        # print(used_commands)
+
     template_name = 'server_management/server_call.html'
 
     context_server_name = 'server_name'
@@ -86,6 +98,11 @@ def server_call(request, server_name):
                 resp = connection.send_message_with_response(data['command'])
                 if cmd_content is not None: cmd_content = cmd_content + resp
 
+            used_commands.append(data['command'])
+            print(used_commands)
+            cookie_string = cookie_string + data['command'] + '-'
+            print(cookie_string)
+
             fill.update({context_cmd_history: cmd_content})
 
         elif form_b.is_valid():
@@ -113,8 +130,14 @@ def server_call(request, server_name):
     else:
         fill.update({context_server_connection: False})
 
+    fill.update({context_used_commands: used_commands})
+
     response = render(request, template_name, fill)
     response.set_cookie('cmd_history', cmd_content)
+    if cookie_string is None:
+        response.set_cookie('used_commands', '')
+    else:
+        response.set_cookie('used_commands', cookie_string)
 
     return response
 

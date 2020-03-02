@@ -1,7 +1,16 @@
 pre{
     background: black;
-    color: aliceblue;
+    color: white;
     /*color: white;*/
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    color: rgb(255,255,255);
+
+    font-family: Lato,sans-serif;
+    font-size: 16px;
 }
 
 .grid-container{
@@ -10,34 +19,38 @@ pre{
             'control header'
             'console commands'
             'confirm learn';
-    grid-template-columns: auto 30vw;
-    grid-template-rows: 50px calc(100vh - 150px) 100px;
+    grid-template-columns: 60vw auto;
+    grid-template-rows: 60px calc(100vh - 110px) 50px;
 }
 /*CONTROL*/
 .control{
     grid-area: control;
-    height: 50px;
+    /*height: 50px;*/
 
     display: flex;
     justify-content: space-between;
     padding-right: 5px;
 
-    background-color: #1f2833;
-    color: #66fcf1;
-
-    border: 1px solid red;
+    background-color: rgb(30, 37, 48);
 }
 .controlName{
     height: inherit;
-    width: 100px;
+    /*width: 100px;*/
 
     display: flex;
     justify-content: center;
     align-items: center;
 
-    padding-left: 10px;
+    /*padding:  10px;*/
+    margin-left: 10px;
 
     font-size: 20px;
+}
+.controlName > a{
+    border-radius: 25px;
+
+    padding: 5px 10px 5px 10px;
+    border: 1px solid white;
 }
 
 .controlContent{
@@ -53,14 +66,12 @@ pre{
 /*HEADER*/
 .header{
     grid-area: header;
-    height: 50px;
+    /*height: 50px;*/
 
-    background-color: #1f2833;
-
-    border: 1px solid green;
+    background-color: rgb(30, 37, 48);
 }
 .headerContent{
-    height: inherit;
+    height: 100%;
 
     display: flex;
     justify-content: flex-end;
@@ -72,10 +83,9 @@ pre{
     grid-area: console;
     background-color: black;
 
+    border-bottom:2px solid white ;
     /*height: calc(100vh - 150px);*/
     overflow: auto;
-
-    border: 1px solid green;
 }
 /*END CONSOLE*/
 /*COMMANDS*/
@@ -87,32 +97,43 @@ pre{
     overflow-y: auto;
 
     font-size: 20px;
-    border: 1px solid red;
 }
 /*END COMMANDS*/
 /*CONFIRM*/
 .confirm{
     grid-area: confirm;
-    height: 100px;
+    /*height: 100px;*/
 
-    border: 1px solid red;
+    background-color: rgb(44, 54, 69);
 }
 /*END CONFIRM*/
 /*LEARN*/
 .learn{
     grid-area: learn;
-    height: 100px;
 
-    border: 1px solid green;
+    background-color: rgb(44, 54, 69);
 }
 /*END LEARN*/
 
 table,th,td {
     border: 1px solid black;
+    color: #2857a1;
+    background-color: #fff;
+    size: 14px;
 }
 table{
     width: 100%;
 }
+.obal{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.deleteRow{
+    cursor: pointer;
+    color: red;
+}
+
 td:hover{
     background-color: green;
     color: red;
@@ -121,7 +142,7 @@ td:hover{
 .indicator{
     width: 30px;
     height: 30px;
-
+    border-radius: 25px;
 }
 .connected{
     background-color: green;
@@ -129,4 +150,89 @@ td:hover{
 
 .disconnected{
     background-color: red;
+}
+
+.selected_col{
+    background-color: #138a07;
+    color: white;
+}
+
+form{
+    height: 100%;
+    width: 100%;
+}
+
+
+
+.inputContainerA{
+    display: grid;
+    grid-template-areas: 'input send';
+    grid-template-columns: 80% auto;
+    grid-gap: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+    padding: 0;
+}
+
+.inputCommandSend{
+    grid-area: send;
+    width: 100%;
+    height: 100%;
+
+    font-size: 18px;
+    font-weight: bold;
+}
+.inputCommandSend:focus{
+    background-color: #138a07;
+    border-color: #0e6305;
+}
+
+.inputCommand{
+    grid-area: input;
+
+    background-color: black;
+    color: white;
+
+    padding: 0 0 0 10px;
+    font-size: 18px;
+
+}
+
+.learn_container{
+    display: grid;
+    grid-template-areas: 'learnInput learnLabel learnSend';
+    grid-template-columns: 70% 15% auto;
+
+    width: 100%;
+    height: 100%;
+}
+
+.learnInput{
+    grid-area: learnInput;
+
+    font-size: 18px;
+    padding: 0 0 0 15px;
+}
+
+.learnLabel{
+    grid-area: learnLabel;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.learnSend{
+    grid-area: learnSend;
+
+    font-size: 14px;
+    font-weight: bold;
+}
+.learnSend:focus{
+    background-color: #138a07;
+    border-color: #0e6305;
 }

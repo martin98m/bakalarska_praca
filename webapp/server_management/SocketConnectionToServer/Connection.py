@@ -18,6 +18,7 @@ class ServerConnection:
 
     def connect(self):
         try:
+            print(self.host, '|', self.port)
             self.sock.connect((self.host, self.port))
             self.sock.sendall(b"admin\n")  # todo change
             self.sock.sendall(b"admin\n")

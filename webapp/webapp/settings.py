@@ -78,11 +78,18 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'server_usage',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': ''
+        'NAME': 'bcksfnyd',
+        'USER': 'bcksfnyd',
+        'PASSWORD': 'Hz5DGV-kLNqRVaEtU7R8PqPy_qwGZ9G1',
+        'HOST': 'balarama.db.elephantsql.com'
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'server_usage',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'postgres',
+    #     'HOST': ''
+    # }
     # 'elephant': {
     #         'ENGINE': 'django.db.backends.postgresql',
     #         'NAME': 'uummybji',

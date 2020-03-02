@@ -14,9 +14,9 @@ public class Database {
 
     private void connect(){
         //todo update later for production
-        String url = "jdbc:postgresql://localhost:5432/server_usage";
-        String username = "postgres";
-        String password = "postgres";
+        String url = "jdbc:postgresql://balarama.db.elephantsql.com:5432/bcksfnyd";
+        String username = "bcksfnyd";
+        String password = "Hz5DGV-kLNqRVaEtU7R8PqPy_qwGZ9G1";
         try {
             //Connects to database using ^^ parameters
             dbConnection = DriverManager.getConnection(url,username,password);

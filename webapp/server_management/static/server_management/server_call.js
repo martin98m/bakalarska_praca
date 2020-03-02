@@ -5,8 +5,8 @@ function addRowHandlers(tableName) {
         let currentRow = table.rows[i];
         let createClickHandler = function(row) {
             return function() {
-                let cell = row.getElementsByTagName("td")[0];
-                console.log(cell);
+                let cell = row.getElementsByTagName("td")[0].getElementsByTagName('a')[0];
+                // console.log(cell);
                 document.getElementById('inputCommand').value = cell.innerHTML;
             };
         };
@@ -52,3 +52,14 @@ console.log('hello a ');
     else
         showTable('Global');
 
+
+    function deleteRow(row) {
+        let table = row.parentElement.parentElement.parentElement.parentElement;
+        // console.log(table);
+        let rowA = row.parentElement.parentElement.parentElement;
+        // console.log(rowA);
+
+        table.removeChild(rowA);
+        let all = document.cookie;
+        // console.log(all)
+    }

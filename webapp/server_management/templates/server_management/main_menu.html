@@ -18,12 +18,12 @@
     </div>
     <div class="header">
         <div class="navbar">
-            <div class="buttonMain">item1</div>
-            <div class="buttonMain">item2</div>
+            <a class="buttonMain">item1</a>
+            <a class="buttonMain">item2</a>
                 {% for server in server_conn %}
-                    <div class="buttonMain">
-                        <a href="/server_management/server_call/{{ server }}">{{ server }}</a>
-                    </div>
+{#                    <div>#}
+                        <a class="buttonMain buttonMainBig"href="/server_management/server_call/{{ server }}">{{ server }}</a>
+{#                    </div>#}
                 {% endfor %}
             <a class="logout" href="/server_management/accounts/logout">Logout</a>
         </div>

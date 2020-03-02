@@ -13,14 +13,24 @@ body{
     align-items: center;
 
     margin-right: 15px;
-    background-color: #1f283f;
-    border: 1px solid black;
-    color: #66fcf1;
+    /*background-color: #1f283f;*/
+    border: 1px solid white;
+    border-radius: 25px;
+
+    text-decoration: none;
+}
+
+.buttonMainBig {
+    width: 100px;
+    text-decoration: none;
+    color: inherit;
 }
 
 .buttonMain:hover{
-    background-color: #c5c6c7;
-    color: black;
+
+    background-color: #138a07;
+    border: 1px solid #138a07;
+
 
     cursor: pointer;
 }
@@ -33,20 +43,23 @@ body{
     justify-content: center;
     align-items: center;
 
-    margin-right: 3px;
+    margin-right: 10px;
 
-    background-color: #0b0c10;
+    border: 2px solid white;
+    border-radius: 25px;
+
+    /*background-color: #0b0c10;*/
 
     font-size: 18px;
-    text-decoration: none;
 }
 .logout:visited, .logout:link{
     text-decoration: none;
-    color: #66fcf1;
+    color: white;
 }
 .logout:hover{
     background-color: red;
-    color: black;
+    border: 2px solid red;
+
 
     cursor: pointer;
 }

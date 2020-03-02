@@ -21,11 +21,11 @@
         <div class="controlContent">
             <a class="buttonMain">clear</a>
             <a class="buttonMain">restart</a>
-            <a class="buttonMain" onclick="disconnectSocket()">disconnect</a>
+            <a class="buttonMain buttonMainBig" onclick="disconnectSocket()">disconnect</a>
             {% if connection  == True %}
                 <div class="indicator connected" title="Connected to {{ server_name }}"></div>
             {% else %}
-                <div class="indicator disconnected" title="Disconnected from {{ server_name }}"></div>
+                <div class="indicator disconnected" title="Not connected to {{ server_name }}"></div>
             {% endif %}
 
         </div>
@@ -33,7 +33,7 @@
 
     <div class="header">
         <div class="headerContent">
-            <a class="buttonMain">main menu</a>
+            <a class="buttonMain buttonMainBig" href="/server_management">main menu</a>
             <a class="logout" href="/server_management/accounts/logout">logout</a>
         </div>
     </div>
@@ -47,25 +47,35 @@
     <div class="commands">
         <table id="tableGlobal">
             <tr>
-                <th style="background-color: red" onclick="showTable('Global')">global</th>
+                <th class="selected_col" onclick="showTable('Global')">global</th>
                 <th onclick="showTable('User')">user</th>
                 <th onclick="showTable('Used')">used</th>
             </tr>
             {% for global in global_commands %}
                 <tr>
-                    <td colspan="3">{{ global.commandsave }}</td>
+                    <td colspan="3">
+                        <div class="obal">
+                            <a>{{ global.commandsave }}</a>
+                            <a class="deleteRow" onclick="deleteRow(this)">X</a>
+                        </div>
+                    </td>
                 </tr>
             {% endfor %}
         </table>
         <table id="tableUser">
             <tr>
                 <th onclick="showTable('Global')">global</th>
-                <th style="background-color: red" onclick="showTable('User')">user</th>
+                <th class="selected_col" onclick="showTable('User')">user</th>
                 <th onclick="showTable('Used')">used</th>
             </tr>
             {% for user in user_commands %}
                 <tr>
-                    <td colspan="3">{{ user.commandsave }}</td>
+                    <td colspan="3">
+                        <div class="obal">
+                            <a>{{ user.commandsave }}</a>
+                            <a class="deleteRow" onclick="deleteRow(this)">X</a>
+                        </div>
+                    </td>
                 </tr>
             {% endfor %}
         </table>
@@ -73,11 +83,16 @@
             <tr>
                 <th onclick="showTable('Global')">global</th>
                 <th onclick="showTable('User')">user</th>
-                <th style="background-color: red" onclick="showTable('Used')">used</th>
+                <th class="selected_col" onclick="showTable('Used')">used</th>
             </tr>
-            {% for com in used_commands %}
+            {% for com in used_commands reversed %}
                 <tr>
-                    <td colspan="3">{{ com }}</td>
+                    <td colspan="3">
+                        <div class="obal">
+                            <a>{{ com }}</a>
+                            <a class="deleteRow" onclick="deleteRow(this)">X</a>
+                        </div>
+                    </td>
                 </tr>
             {% endfor %}
         </table>
@@ -86,22 +101,32 @@
     <div class="confirm">
         <form id="send_command" method="post">
             {% csrf_token %}
-            <input name="command" id="inputCommand">
-            <button type="submit">Submit</button>
+            <div class="inputContainerA">
+                <input class="inputCommand" name="command" id="inputCommand"/>
+                <button class="inputCommandSend" type="submit">Send</button>
+            </div>
         </form>
     </div>
 
     <div class="learn">
         <form id="learn_command" method="post">
             {% csrf_token %}
-            <input name="commandSave">
+            <div class="learn_container">
+                <input name="commandSave" class="learnInput">
 
-            <input type="radio" id="target1" name="target" value="global">
-            <label for="target1">Global</label>
+                <div class="learnLabel">
+                    <div>
+                        <input  type="radio" id="target1" name="target" value="global">
+                        <label for="target1">Global</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="target2" name="target" value="user" checked>
+                        <label for="target2">User</label>
+                    </div>
+                </div>
 
-            <input type="radio" id="target2" name="target" value="user" checked>
-            <label for="target2">User</label>
-            <button type="submit">Save Command</button>
+                <button class="learnSend" type="submit">Save Command</button>
+            </div>
         </form>
     </div>
 </div>

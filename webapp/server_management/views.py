@@ -92,11 +92,18 @@ def server_call(request, server_name):
                 connection = SocketManager()\
                     .add_socket(request.user.username, server_name, server_info.server_ip, server_info.server_port)
 
-            connection.connect()
+            print('CONN>', connection, '\n', 'CONS>', connection.is_connected())
+            if connection.is_connected() is False:
+                connection.connect()
+
             data = form_a.cleaned_data
             if connection.is_connected():
                 resp = connection.send_message_with_response(data['command'])
-                if cmd_content is not None: cmd_content = cmd_content + resp
+                print('RESP>', resp)
+                if cmd_content is not None:
+                    cmd_content = cmd_content + resp
+                else:
+                    cmd_content = resp
 
             used_commands.append(data['command'])
             print(used_commands)

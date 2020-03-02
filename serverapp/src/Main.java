@@ -51,7 +51,7 @@ public class Main {
             }
         };
         collectInfo.start();
-
+        
     }
 
     private static void setSleepTime(String serverName){

@@ -12,9 +12,10 @@ class SocketManager:
         if self.instance is None:
             SocketManager.instance = SocketManager.__SocketManager()
 
-    def get_socket(self, name, server_name):
+    # returns socked based on user_name and server_name
+    def get_socket(self, user_name, server_name):
         try:
-            user_connections = self.instance.list_of_connections.get(name)
+            user_connections = self.instance.list_of_connections.get(user_name)
             if user_connections is None:
                 return None
             else:

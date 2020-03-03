@@ -12,8 +12,8 @@ public class Main {
         System.out.println("Starting server management application...");
 
         //checks if ip is correct + sets time_between_system_checks + system test
-        FirstRun fr = new FirstRun();
-        fr.firstRun();
+//        FirstRun fr = new FirstRun();
+//        fr.firstRun();
 
         //creates server socket for communication with webapp
         Thread connection = new Thread(){
@@ -26,6 +26,7 @@ public class Main {
         connection.start();
 
         //system check in set interval + uploads data to database
+        /*
         Thread collectInfo = new Thread(){
             @Override
             public void run() {
@@ -51,7 +52,7 @@ public class Main {
             }
         };
         collectInfo.start();
-        
+        */
     }
 
     private static void setSleepTime(String serverName){

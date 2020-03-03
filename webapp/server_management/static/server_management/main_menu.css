@@ -66,7 +66,8 @@ body{
 /*END OF PAGE NAME*/
 
 .sidebar{
-    position: fixed;
+    position: sticky;
+    top: 0;
     /*maybe change*/
 
     width: inherit;
@@ -88,8 +89,8 @@ body{
 }
 .sidebarContentA:hover{
     cursor: pointer;
-    background-color: #c5c6c7;
-    color: black;
+    background-color: #1f283f;
+    /*color: black;*/
 }
 
 .sidebarContentB{
@@ -112,8 +113,9 @@ body{
 }*/
 .sidebarContentB:hover{
     cursor: pointer;
-    background-color: #c5c6c7;
-    color: black;
+    /*background-color: #c5c6c7;*/
+    background-color: #1f283f;
+    /*color: black;*/
 }
 
 .switch {

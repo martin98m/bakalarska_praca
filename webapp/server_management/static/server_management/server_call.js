@@ -1,22 +1,19 @@
-function addRowHandlers(tableName) {
-    let table = document.getElementById(tableName);
-    let rows = table.getElementsByTagName("tr");
-    for (let i = 1; i < rows.length; i++) {
-        let currentRow = table.rows[i];
-        let createClickHandler = function(row) {
-            return function() {
-                let cell = row.getElementsByTagName("td")[0].getElementsByTagName('a')[0];
-                // console.log(cell);
-                document.getElementById('inputCommand').value = cell.innerHTML;
-            };
-        };
-        currentRow.onclick = createClickHandler(currentRow);
+function setListenersForCommands(){
+    let items = document.getElementsByClassName('commandSendToInput');
+
+    for (let i = 0; i < items.length; i++) {
+        console.log(i, '|', items[i]);
+        let x = items[i];
+        items[i].addEventListener(
+            'click',
+            function () {
+                console.log(x);
+                document.getElementById('inputCommand').value = x.innerHTML;
+                },
+            false);
     }
 }
-
-addRowHandlers('tableGlobal');
-addRowHandlers('tableUser');
-addRowHandlers('tableUsed');
+setListenersForCommands();
 
 console.log('hello a ');
 

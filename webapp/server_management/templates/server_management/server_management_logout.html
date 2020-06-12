@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static "server_management/logout_page.css" %}">
+</head>
+<body>
+<div class="grid-logout-container">
+    <div class="grid-logout-up">
+        <h1>Boli ste úspešne odhlásený</h1>
+    </div>
+    <div class="grid-logout-bot">
+        <a href="{% url 'server_management:login_url' %}?next=/">Prihláste sa</a>
+        <a href="/admin">Prihláste sa do Admin rozhrania</a>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>

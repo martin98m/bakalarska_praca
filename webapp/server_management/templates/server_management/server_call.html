@@ -33,15 +33,13 @@
 
     <div class="header">
         <div class="headerContent">
-            <a class="buttonMain buttonMainBig" href="/server_management">main menu</a>
-            <a class="logout" href="/server_management/accounts/logout">logout</a>
+            <a class="buttonMain buttonMainBig" href="{% url 'server_management:server_data_url' server_name  %}">{{ server_name }}</a>
+            <a class="buttonMain buttonMainBig" href="{% url 'server_management:main_menu_url' %}">Hlavne menu</a>
+            <a class="logout" href="{% url 'server_management:logout_url' %}">Odhlasit</a>
         </div>
     </div>
     <div class="console">
-        <pre id="scroll" >
-            {% for a in cmd_history %}{{ a }}{% endfor %}
-{#            {% for x in response %}{{ x }}{% endfor %}#}
-        </pre>
+        <pre id="scroll" >{% for a in cmd_history %}{{ a }}{% endfor %}</pre>
     </div>
 
     <div class="commands">

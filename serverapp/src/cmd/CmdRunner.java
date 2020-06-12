@@ -21,10 +21,6 @@ public class CmdRunner implements Runnable {
         }
     }
 
-    public Process getProcess() {
-        return process;
-    }
-
     @Override
     public void run() {
         BufferedReader stdout =
@@ -46,6 +42,7 @@ public class CmdRunner implements Runnable {
             while (process.isAlive()) {
                 try {
                     cmnd = in.readLine();
+                    System.out.println("READ:" + cmnd );
                     if(cmnd == null) {
                         System.out.println("ERROR reading null");
                         System.out.println(in.ready());
@@ -100,7 +97,7 @@ public class CmdRunner implements Runnable {
                 e.printStackTrace();
                 break;
             }
-            System.out.println(line+'\n');
+            System.out.println(line);
         }
     }
 

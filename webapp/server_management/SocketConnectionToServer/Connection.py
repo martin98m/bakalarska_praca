@@ -1,27 +1,21 @@
 import socket
 
 
-# todo if new host/port are added dc from last
-# todo if new host+port dont match discard old socket and add new
+from server_management.SocketConnectionToServer.AESModule import AESModule
 
-# todo add username + password to constructor
+
 class ServerConnection:
     def __init__(self, host, port):
         self.host = host
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(1)  # reading ends after #1 sec of inactivity
         self.connected = False
-
-    def get_sock(self):
-        return self.sock
+        self.crypt = AESModule()
 
     def connect(self):
         try:
-            print(self.host, '|', self.port)
+            # print(self.host, '|', self.port)
             self.sock.connect((self.host, self.port))
-            self.sock.sendall(b"admin\n")  # todo change
-            self.sock.sendall(b"admin\n")
             self.connected = True
             print('SOCKET?CONNECT?SUCCESSFUL')
         except ConnectionError:
@@ -31,54 +25,49 @@ class ServerConnection:
             self.connected = False
             print('SOCKET_TIMEOUT_ERROR')
 
+    def disconnect(self):
+        self.sock.close()
+        self.connected = False
+
     def is_connected(self):
         return self.connected
 
     def send_msg(self, message):
-        msg = message.rstrip() + '\n'
-        self.sock.sendall(msg.encode('UTF-8'))
+        enc_msg = self.crypt.encode_data(message)
+        self.sock.send(enc_msg)
         return 'changed'
 
     def send_message_with_response(self, message):
-        msg = message.rstrip() + '\n'
-        self.sock.sendall(msg.encode('UTF-8'))
-        # num = self.read_num()
 
-        # num = int(resp.decode('utf-8'))
-        # print(num)
+        enc_msg = self.crypt.encode_data(message)
+        self.sock.send(enc_msg)
 
         lines = []
-        # while len(lines) != 10:
-        cont = True
-        while cont:
-            try:
-                read_num = self._read_num()
-            except socket.error:
-                cont = False
-                break
+        print("X")
+        enc_msg = self.sock.recv(1024)
+        print(enc_msg)
+        dec_msg = self.crypt.decode_data(enc_msg)
+        print(dec_msg)
+        return dec_msg
+
+        # while True:
+        #     try:
+        #         read_num = self._read_num()
+        #     except socket.error:
+        #         SERVER HAS NOT SEND ANYTHING FOR 2sec
+                # break
             # print(read_num)
-            line = self.sock.recv(read_num + 2)
+            # if read_num == -1:
+            #     return lines
+            # line = self.sock.recv(read_num + 2)
             # print(line)
-            line = line.decode('utf-8')
-            # line = line.replace('\r', '')
-            line = line.replace('\n', '')
-            lines.append(line)
-
-        return lines
-
-    def _read_num(self):
-        # print("READING NUMBER")
-        number = []
-        while True:
-            a = self.sock.recv(1)
-            # print(a)
-            if a == b'\n':
-                # print("n found")
-                abc = "".join(number)
-                # print(abc)
-                return int(abc)
-            number.append(a.decode('utf-8'))
-
-    def disconnect(self):
-        self.sock.close()
-        self.connected = False
+            # try:
+            #     line = line.decode('utf-8')
+            # except UnicodeDecodeError:
+            #     return lines
+            # else:
+            #     line = line.replace('\r', '')
+                # line = line.replace('\n', '')
+                # lines.append(line)
+        #
+        # return lines

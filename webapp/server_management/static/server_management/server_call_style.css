@@ -93,6 +93,9 @@ body{
     grid-area: commands;
     background-color: #c5c6c7;
 
+    width: 100%;
+    height: 100%;
+
     /*height: calc(100vh - 150px);*/
     overflow-y: auto;
 

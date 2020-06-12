@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static "server_management/login_page.css" %}">
+
+</head>
+<body>
+<div class="grid-login-container">
+    <div class="grid_login-fill-1"></div>
+    <div class="grid-login-content">
+
+        <div class="login_box">
+        <div class="grid_login">
+            <h1 style="display: flex; justify-content: center">Prihláste sa</h1>
+
+            {#{% extends "base.html" %}#}
+
+            {% if form.errors %}
+                <p>Your username and password didn't match. Please try again.</p>
+            {% endif %}
+
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <p>Your account doesn't have access to this page. To proceed,
+                        please login with an account that has access.</p>
+                {% else %}
+                    <p>Please login to see this page.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="grid_form">
+
+            <form method="post" action="{% url 'server_management:login_url' %}">
+                {% csrf_token %}
+                <div class="form-a">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                </div>
+                <div class="form-a">
+                    {{   form.password.label_tag }}
+                    {{ form.password }}
+                </div>
+                <div class="form-c">
+                    <input type="submit" value="login">
+                    <input type="hidden" name="next" value="{{ next }}">
+                </div>
+            </form>
+        </div>
+    </div>
+        <div class="login_box">
+        <div class="grid_login">
+            <h1 style="display: flex; justify-content: center">Prihláste sa ako Admin</h1>
+
+            {#{% extends "base.html" %}#}
+
+            {% if form.errors %}
+                <p>Your username and password didn't match. Please try again.</p>
+            {% endif %}
+
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <p>Your account doesn't have access to this page. To proceed,
+                        please login with an account that has access.</p>
+                {% else %}
+                    <p>Please login to see this page.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="grid_form">
+
+            <form method="post" action="/admin/login/?next=/admin/">
+                {% csrf_token %}
+                <div class="form-a">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                </div>
+                <div class="form-a">
+                    {{   form.password.label_tag }}
+                    {{ form.password }}
+                </div>
+                <div class="form-c">
+                    <input type="submit" value="login">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    </div>
+    <div class="grid_login-fill-2"></div>
+</div>
+
+
+
+
+</body>
+</html>

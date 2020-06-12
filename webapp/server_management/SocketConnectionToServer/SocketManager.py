@@ -1,10 +1,24 @@
+import psycopg2
+
 from server_management.SocketConnectionToServer.Connection import ServerConnection
+from Crypto.PublicKey import RSA
+# from crypto.Cipher import PKCS1_OAEP
+# import binascii
 
 
 class SocketManager:
     class __SocketManager:
         def __init__(self):
             self.list_of_connections = {}
+            print('SOCKET MANAGER STARTED !!!!!!!!!!!!!!')
+            # self.private_key = RSA.generate(1024)
+            # pub_key = self.private_key.publickey()
+            # print('PUB: ', pub_key)
+            # conn = psycopg2.connect(
+            #     host="postgres://bcksfnyd:Hz5DGV-kLNqRVaEtU7R8PqPy_qwGZ9G1@balarama.db.elephantsql.com:5432/",
+            #     database="bcksfnyd",
+            #     user="bcksfnyd",
+            #     password="Hz5DGV-kLNqRVaEtU7R8PqPy_qwGZ9G1")
 
     instance = None
 

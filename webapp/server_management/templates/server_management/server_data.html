@@ -6,92 +6,119 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'server_management/table_style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'server_management/Chart.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'server_management/server_data.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'server_management/global_styles.css' %}">
     <script src="{% static 'server_management/Chart.min.js' %}"></script>
 
 </head>
 <body>
-{% block loggedin %}
-    {% if user.is_authenticated %}
-        You are logged in as: {{ user.username }}
-        <a href="/server_management/accounts/logout">logout</a>
-    {% else %}
-        You are not logged in
-        <a href="/server_management/accounts/login">login</a>
-    {% endif %}
-{% endblock %}
 
-<table>
-    <tr>
-        <th>Server name</th>
-        <th>server nick</th>
-        <th>refresh rate</th>
-        <th>OS</th>
-        <th>Server IP</th>
-        <th>Server port</th>
-    </tr>
-    {% for info in server_info %}
-        <td>{{ info.server_name }}</td>
-        <td>{{ info.server_nickname }}</td>
-        <td>{{ info.data_collection_delay_minutes }}</td>
-        <td>{{ info.os }}</td>
-        <td>{{ info.server_ip }}</td>
-        <td>{{ info.server_port }}</td>
-    {% endfor %}
-</table>
+<div class="grid-container">
+    <div class="grid-head">
+        <div class="grid-head-info">
+            <table>
+                <tr>
+                    <th>Server name</th>
+                    <th>server nick</th>
+                    <th>refresh rate</th>
+                    <th>OS</th>
+                    <th>Server IP</th>
+                    <th>Server port</th>
+                </tr>
+                <tr>
+                    {% if server_info.0.server_name is not None %}
+                        <td>{{ server_info.0.server_name }}</td>
+                    {% else %}
+                        <td>null</td>
+                    {% endif %}
 
-<table style="display: none">
-    <tr>
-        <th>Server_name</th>
-        <th>cpu</th>
-        <th>ram</th>
-        <th>date</th>
-        <th>time</th>
-    </tr>
-    {% for data in server_data %}
-        <tr>
-            <td>{{ data.server_name }}</td>
-            <td>{{ data.cpu_usage }}</td>
-            <td>{{ data.ram_usage }}</td>
-            <td>{{ data.date }}</td>
-            <td>{{ data.time }}</td>
-        </tr>
-    {% endfor %}
-</table>
+                    {% if server_info.0.server_nickname is not None %}
+                        <td>{{ server_info.0.server_nickname }}</td>
+                    {% else %}
+                        <td>null</td>
+                    {% endif %}
 
-<button onclick="removeData()">DELETE</button>
-<button onclick="updateData()">UPDATE</button>
-<a id="down">DOWNLOAD</a>
-<button onclick="getDownloadJSON()">LOG</button>
-{#<script>console.log(document.getElementById('myChart'))</script>#}
-<canvas id="myChart"></canvas>
+                    {% if server_info.0.data_collection_delay_minutes is not None %}
+                        <td>{{ server_info.0.data_collection_delay_minutes }}</td>
+                    {% else %}
+                        <td>null</td>
+                    {% endif %}
+
+                    {% if server_info.0.os is not None %}
+                        <td>{{ server_info.0.os }}</td>
+                    {% else %}
+                        <td>null</td>
+                    {% endif %}
+
+                    {% if server_info.0.server_ip is not None %}
+                        <td>{{ server_info.0.server_ip }}</td>
+                    {% else %}
+                        <td>null</td>
+                    {% endif %}
+
+                    {% if server_info.0.server_port is not None %}
+                        <td>{{ server_info.0.server_port }}</td>
+                    {% else %}
+                        <td>null</td>
+                    {% endif %}
+                </tr>
+            </table>
+        </div>
+        <div class="grid-head-menu">
+            {% for field in server_info %}
+                <a class="buttonMain buttonMainBig" href="{% url 'server_management:server_call_url' field.server_name %}">Pripojiť</a>
+            {% endfor %}
+            <a class="buttonMain buttonMainBig" href="{% url 'server_management:main_menu_url' %}">Menu</a>
+            <a class="logout" href="{% url 'server_management:logout_url' %}">Odhlásiť</a>
+        </div>
+    </div>
+    <div class="grid-main">
+        <canvas id="myChart"></canvas>
+    </div>
+    <div class="grid-control">
+        <a onclick="removeData()" class="buttonMain buttonMainBig">DELETE</a>
+        <a onclick="updateData()" class="buttonMain buttonMainBig">REFRESH</a>
+        <a id="down_json" class="buttonMain buttonMainBig">JSON</a>
+        <a id="down_csv" class="buttonMain buttonMainBig">CSV</a>
+    </div>
+</div>
 
 <script>
-    var ctx = document.getElementById('myChart').getContext('2d');
+    let ctx = document.getElementById('myChart').getContext('2d');
 
-    var chart = new Chart(ctx, {
+    let labels = [ {% for date in server_data %} "{{ date.time }}", {% endfor %} ];
+    let data_cpu = [ {% for date in server_data %} "{{ date.cpu_usage }}", {% endfor %} ];
+    let data_ram = [ {% for date in server_data %} "{{ date.ram_usage }}", {% endfor %} ];
+    let encodedUri;
+
+    let chart = new Chart(ctx, {
     // The type of chart we want to create
     type: 'line',
 
     // The data for our dataset
     data: {
-        labels: [],
+        labels: [...labels],
         datasets: [{
             label: 'CPU',
             backgroundColor: 'rgb(255, 99, 132)',
             borderColor: 'rgb(255, 99, 132)',
-            data: []
+            data: [...data_cpu],
+            hidden: true
         },
         {
             label: 'RAM',
             backgroundColor: 'rgb(30, 226, 30)',
             borderColor: 'rgb(30, 142, 30)',
-            data: []
+            data: [...data_ram]
         }
         ]
     },
 
     // Configuration options go here
-    options: {}
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
 });
 
     function removeData() {
@@ -103,65 +130,59 @@
         chart.update();
     }
 
-    let labels = [];
-    let data_cpu = [];
-    let data_ram = [];
-
-    {% for date in server_data %}
-        labels.push('{{ date.time }}');
-        data_cpu.push({{ date.cpu_usage }});
-        data_ram.push({{ date.ram_usage }});
-    {% endfor %}
-
-    console.log(labels);
-    console.log(data_cpu);
-    console.log(data_ram);
-
     function updateData() {
-        labels.forEach((x) => {
-            chart.data.labels.push(x);
-        });
-        data_cpu.forEach((x)=>{
-           chart.data.datasets[0].data.push(x);
-        });
-        data_ram.forEach((x)=>{
-           chart.data.datasets[1].data.push(x);
-        });
+
+        chart.data.labels = [...labels];
+        chart.data.datasets[0].data = [...data_cpu];
+        chart.data.datasets[1].data = [...data_ram];
+
+        console.log(chart.data.labels);
+        console.log(chart.data.datasets[0].data);
+
         chart.update();
     }
 
     function getDownloadJSON(){
-        let data = [];
-        let row = {Server_name: null, cpu: null, ram: null};
-        {#data.push(row);#}
-        {#data.push(row);#}
-        {#console.log(data);#}
-//let row;
-        {% for x in server_data %}
-            row = {Server_name: null, cpu: null, ram: null};
-            row["Server_name"] = "{{ x.server_name }}";
-            row["cpu"] = {{ x.cpu_usage }};
-            row["ram"] = {{ x.ram_usage }};
-            console.log(row);
-            data.push(row);
-        {% endfor %}
-        console.log(data);
+        let data = [
+            {% for data in server_data %}
+                {Server_name: "{{ data.server_name }}", cpu: {{ data.cpu_usage }}, ram: {{ data.ram_usage }} },
+            {% endfor %}
+            ];
 
-        {#let obj = {a: 123, b: "4 5 6"};#}
+        let csv = [
+            [
+                "Server_name", "CPU_usage", "RAM_usage"
+            ],
+            {% for data in server_data %}
+                [
+                    "{{ data.server_name }}", "{{ data.cpu_usage }}", "{{ data.ram_usage }}"
+                ],
+            {% endfor %}
+        ];
+
+        console.log("X",data);
+        console.log("Y",csv);
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+
+        csv.forEach(function(rowArray) {
+            let row = rowArray.join(",");
+            csvContent += row + "\r\n";
+
+            encodedUri = encodeURI(csvContent);
+        });
+
         let dataO = "text/json;charset=utf-8,"+ encodeURIComponent(JSON.stringify(data));
-        document.getElementById("down").setAttribute('href', "data:"+dataO)//download='data.json'";
-        document.getElementById("down").setAttribute('download', "data.json")//download='data.json'";
+        document.getElementById("down_json").setAttribute('href', "data:"+dataO);//download='data.json'";
+        document.getElementById("down_json").setAttribute('download', "{{ server_info.0.server_name }}.json");//download='data.json'";
 
+        document.getElementById("down_csv").setAttribute('href', encodedUri);//download='data.json'";
+        document.getElementById("down_csv").setAttribute('download', "{{ server_info.0.server_name }}.csv");//download='data.json'";
     }
 
-
+        getDownloadJSON();
 </script>
 
 
-
-<a href="/server_management">MAIN MENU</a>
-{% for field in server_info %}
-<a href="/server_management/server_call/{{ field.server_name }}">CALL SERVER</a>
-{% endfor %}
 </body>
 </html>

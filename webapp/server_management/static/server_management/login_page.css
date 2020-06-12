@@ -1,0 +1,92 @@
+.login_box{
+
+    width: 300px;
+    height: 450px;
+
+    background-color: #2857a1;
+
+    border-radius: 25px;
+
+    display: grid;
+
+    grid-template-rows: 1fr 2fr;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+            'login'
+            'form';
+
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: #2196F3;
+
+    height: 100vh;
+    width: 100vw;
+}
+.grid-login-container{
+
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-areas: "fill content fill2";
+}
+
+.grid_login-fill-1{
+    grid-area: fill;
+}
+.grid_login-fill-2{
+    grid-area: fill2;
+}
+.grid-login-content{
+    grid-area: content;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.grid_login{
+    grid-area: login;
+    text-align: center;
+
+}
+.grid_login>p{
+    text-align: center;
+}
+
+.grid_form{
+    grid-area: form;
+}
+.grid_form>form{
+    height: 100%;
+    width: 100%;
+
+    display: grid;
+    grid-template-rows: 1fr 1fr 2fr;
+}
+.form-a{
+    margin-left: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.form-a > input{
+    width: 90%;
+    height: 30px;
+}
+
+.form-c{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.form-c>input{
+    width: 160px;
+    height: 35px;
+}

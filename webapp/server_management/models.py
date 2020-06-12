@@ -1,46 +1,29 @@
 from django.db import models
-
-
-class ServerData(models.Model):
-    server_name = models.CharField(max_length=255, primary_key=True)
-    cpu_usage = models.IntegerField()
-    ram_usage = models.IntegerField()
-    ram_capacity = models.IntegerField()
-    date = models.DateField()
-    time = models.TimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'server_data'
+import django.contrib.auth as user_model
 
 
 class ServerInfo(models.Model):
-    server_name = models.CharField(unique=True, max_length=255, primary_key=True)
-    server_alias = models.CharField(max_length=255)
-    os = models.CharField(max_length=255)
-    server_ip = models.CharField(max_length=16)
-    server_port = models.IntegerField()
-    data_collection_delay_minutes = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'server_info'
+    server_name = models.CharField(max_length=255, primary_key=True, default=None, null=False)
+    server_alias = models.CharField(max_length=255, default=None, null=True)
+    server_os = models.CharField(max_length=255, default=None, null=False)
+    server_ip = models.CharField(max_length=16, default=None, null=True)
+    server_port = models.IntegerField(default=None, null=True)
+    data_collection_delay_minutes = models.IntegerField(default=None, null=False)
 
 
-class UserLogin(models.Model):
-    username = models.CharField(unique=True, max_length=255)
-    password = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'user_login'
+class ServerData(models.Model):
+    id = models.AutoField(primary_key=True)
+    server_name = models.ForeignKey(ServerInfo, on_delete=models.CASCADE, default=None)
+    cpu_usage = models.IntegerField(default=None)
+    ram_usage = models.IntegerField(default=None)
+    ram_capacity = models.IntegerField(default=None)
+    date = models.DateField()
+    time = models.TimeField()
 
 
 class UserCommands(models.Model):
-    username = models.CharField(max_length=255, primary_key=True)
-    target = models.CharField(max_length=255)
-    commandsave = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'user_commands'
+    username = models.ForeignKey(user_model.get_user_model(), on_delete=models.CASCADE)
+    # command_type - command only for user or global
+    command_type = models.CharField(max_length=255, default=None)
+    # command that is saved
+    command = models.CharField(max_length=255, default=None)

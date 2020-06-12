@@ -26,19 +26,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '192.168.0.152',
-    '127.0.0.1'
+    '127.0.0.1',
+    'localhost'
 ]
 
 # Application definition
 
 INSTALLED_APPS = [
-    'server_management.apps.ServerManagementConfig',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'server_management.apps.ServerManagementConfig'
 ]
 
 MIDDLEWARE = [
@@ -72,16 +74,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'webapp.wsgi.application'
 
+ASGI_APPLICATION = 'routing.application'
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'bcksfnyd',
+    #     'USER': 'bcksfnyd',
+    #     'PASSWORD': 'Hz5DGV-kLNqRVaEtU7R8PqPy_qwGZ9G1',
+    #     'HOST': 'balarama.db.elephantsql.com'
+    # },
+
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bcksfnyd',
-        'USER': 'bcksfnyd',
-        'PASSWORD': 'Hz5DGV-kLNqRVaEtU7R8PqPy_qwGZ9G1',
-        'HOST': 'balarama.db.elephantsql.com'
+        'NAME': 'bp_server_management',
+        'USER': 'django_app',
+        'PASSWORD': 'postgresql',
+        'host': ''
     }
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
@@ -135,5 +147,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = '/server_management/'
-LOGOUT_REDIRECT_URL = '/server_management/'
+# LOGIN_REDIRECT_URL = '/server_management/'
+# LOGOUT_REDIRECT_URL = '/server_management/'
+# LOGIN_REDIRECT_URL = ''
+# LOGOUT_REDIRECT_URL = ''

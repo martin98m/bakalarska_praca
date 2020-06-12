@@ -7,7 +7,7 @@ serverObj = Array.prototype.slice.call(serverObj);
         if(document.getElementsByName("checkbox"+checkbox)[0].checked){
             let list = document.getElementsByClassName("shownStatFor"+stat);
             for(let item of list)
-                item.style.display = 'block';
+                item.style.display = 'flex';
         }
         else{
             let list = document.getElementsByClassName("shownStatFor"+stat);

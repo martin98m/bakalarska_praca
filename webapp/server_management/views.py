@@ -1,23 +1,25 @@
 # Create your views here.
 import ast
 
-from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import generic
 
 from server_management.SocketConnectionToServer.SocketManager import SocketManager
 from server_management.forms import CommandForm, CommandSave
 from .models import ServerInfo, ServerData, UserCommands
 
-login_url = '/server_management/accounts/login'
+login_url = '/accounts/login'
+# sm = SocketManager()
 
 
-def logout_view(request):
-    logout(request)
-    return HttpResponse(status=201)
+def index(request):
+    return render(request, 'server_management/channel_demo.html')
 
+def room(request, room_name):
+    return render(request, 'server_management/room.html', {
+        'room_name': room_name
+    })
 
 class ServerInfoView(generic.ListView):
     template_name = 'server_management/server_list_with_info.html'
@@ -40,6 +42,8 @@ def data_view(request, server_name):
     context_server_info = 'server_info'
     s_data = ServerData.objects.all().filter(server_name=server_name)
     s_info = ServerInfo.objects.all().filter(server_name=server_name)
+    print(s_data)
+    print(s_info)
 
     return render(request, template_name, {context_server_data: s_data, context_server_info: s_info})
 
@@ -48,6 +52,14 @@ def data_view(request, server_name):
 
 @login_required(login_url=login_url)
 def server_call(request, server_name):
+
+    print(request.user.has_perm('perm1'))
+    print(request.user.get_group_permissions())
+
+    if request.user.has_perm('server_management.view_serverdata'):
+        print('OK MAS PERM')
+    else:
+        return redirect('/')
 
     used_commands = None
     cookie_string = None
@@ -100,6 +112,7 @@ def server_call(request, server_name):
             if connection.is_connected():
                 resp = connection.send_message_with_response(data['command'])
                 print('RESP>', resp)
+                print('cmd>', cmd_content)
                 if cmd_content is not None:
                     cmd_content = cmd_content + resp
                 else:
@@ -125,10 +138,10 @@ def server_call(request, server_name):
             if connection is not None and connection.is_connected() is True:
                 connection.disconnect()
 
-    global_commands = UserCommands.objects.all().filter(target='global')
+    global_commands = UserCommands.objects.all().filter(command_type='global')
     fill.update({context_global_commands: global_commands})
 
-    user_commands = UserCommands.objects.all().filter(username=request.user.username, target='user')
+    user_commands = UserCommands.objects.all().filter(username_id=0, command_type='user')
     fill.update({context_user_commands: user_commands})
     if connection is None:
         fill.update({context_server_connection: False})
@@ -153,12 +166,6 @@ def server_call(request, server_name):
 def main_menu(request):
     template_name = 'server_management/main_menu.html'
 
-    # if request.method == 'POST':
-    #     print('MAIN MENU POST')
-    #     server_name = request.POST.get('server_name')
-    #     print(server_name)
-    #     SocketManager().remove_socket(request.user.username, server_name)
-
     context_server_info = 'server_info'
     context_server_data_latest = 'server_data_latest'
     context_server_conn = 'server_conn'
@@ -171,25 +178,24 @@ def main_menu(request):
         for x in rest:
             res.append(x)
 
-    s_data_latest = ServerData.objects.raw('''SELECT t.server_name, t.CPU_usage, t.RAM_usage, t.date, t.time FROM server_data t
-INNER JOIN (
-    SELECT server_name, max(date+time) as MaxDate
-    from server_data
-    group by server_name
-    ) tm ON t.server_name = tm.server_name AND t.date+t.time = tm.MaxDate
-UNION
-SELECT server_name, NULL as CPU_usage, NULL as RAM_usage, NULL as date, NULL as time FROM server_info
-WHERE server_name NOT in
-      (SELECT t.server_name FROM server_data t
+    s_data_latest = ServerData.objects.raw(
+        '''SELECT t.id, t.server_name_id, t.CPU_usage, t.RAM_usage, t.date, t.time 
+        FROM server_management_serverdata t
         INNER JOIN (
-        SELECT server_name, max(date+time) as MaxDate
-        from server_data
-        group by server_name
-        ) tm ON t.server_name = tm.server_name AND t.date+t.time = tm.MaxDate
+            SELECT server_name_id, max(date+time) as MaxDate
+            from server_management_serverdata
+            group by server_name_id
+        ) tm ON t.server_name_id = tm.server_name_id AND t.date+t.time = tm.MaxDate
+UNION
+SELECT NULL as id, server_name, NULL as CPU_usage, NULL as RAM_usage, NULL as date, NULL as time FROM server_management_serverinfo
+WHERE server_name NOT in
+      (SELECT t.server_name_id FROM server_management_serverdata t
+        INNER JOIN (
+        SELECT server_name_id, max(date+time) as MaxDate
+        from server_management_serverdata
+        group by server_name_id
+        ) tm ON t.server_name_id = tm.server_name_id AND t.date+t.time = tm.MaxDate
     )''')
 
-    # print(s_info)
-    # Person.objects.raw('SELECT * FROM some_other_table', translations=name_map)
-    # print(s_data_latest[1])
-
+    # print(s_data_latest)
     return render(request, template_name, {context_server_info: s_info, context_server_data_latest: s_data_latest, context_server_conn: res})

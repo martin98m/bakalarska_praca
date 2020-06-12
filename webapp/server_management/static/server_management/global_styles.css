@@ -21,7 +21,7 @@ body{
 }
 
 .buttonMainBig {
-    width: 100px;
+    width: 110px;
     text-decoration: none;
     color: inherit;
 }
@@ -31,12 +31,11 @@ body{
     background-color: #138a07;
     border: 1px solid #138a07;
 
-
     cursor: pointer;
 }
 
 .logout{
-    width: 70px;
+    width: 90px;
     height: 30px;
 
     display: flex;

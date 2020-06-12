@@ -21,60 +21,81 @@
             <a class="buttonMain">item1</a>
             <a class="buttonMain">item2</a>
                 {% for server in server_conn %}
-{#                    <div>#}
-                        <a class="buttonMain buttonMainBig"href="/server_management/server_call/{{ server }}">{{ server }}</a>
-{#                    </div>#}
+                        <a class="buttonMain buttonMainBig" href="{% url 'server_management:server_call_url' server %}">{{ server }}</a>
                 {% endfor %}
-            <a class="logout" href="/server_management/accounts/logout">Logout</a>
+            <a class="logout" href="{% url 'server_management:logout_url' %}">Odhlásiť</a>
         </div>
     </div>
 
     <div class="main">
-        <div class="flex-container">
+        <div class="flex-container" style="color: black">
+{#        <div style="width: 300px; height: 300px">asd</div>#}
+{#        <div style="width: 300px; height: 300px">asd</div>#}
+{#        <div style="width: 300px; height: 300px">asd</div>#}
+{#        <div style="width: 300px; height: 300px">asd</div>#}
+{#        <div style="width: 300px; height: 300px">asd</div>#}
+{#        <div style="width: 300px; height: 300px">asd</div>#}
+    {% for x in server_info %}
+        <a>{{ x.server_name }}</a>
+    {% endfor %}
+            {% if server_data_latest|length is 0 %}
+                <a style="color: black; margin-top: 30vh">No servers found :{</a>
+            {% else %}
+
             {% for x in server_data_latest %}
 
-                <div class="server" onclick="location.href='server_data/{{ x.server_name }}'">
-                    <div class="shownStatForServerName">
-                        {% if x.server_name is None %}
-                            name missing<br>
-                        {% else %}
-                            {{ x.server_name }}<br>
-                        {% endif %}
+                <div class="server" onclick="location.href='server_data/{{ x.server_name_id }}'">
+                    <div class="server-head">
+                        <div class="shownStatForServerName box_for_server">
+                            <a>Server Name:</a>
+                            {% if x.server_name_id is None %}
+                                <a>name missing</a>
+                            {% else %}
+                                <a>{{ x.server_name_id }}</a>
+                            {% endif %}
+                        </div>
                     </div>
+                    <div class="server-mid">
+                        <div class="shownStatForCpu box_for_server">
+                            <a>CPU</a>
+                            {% if x.cpu_usage is None %}
+                                <a>cpu_usage missing</a>
+                            {% else %}
+                                <a>{{ x.cpu_usage }} %</a>
+                            {% endif %}
+                        </div>
+                        <div class="shownStatForRam box_for_server">
+                            <a>RAM</a>
+                            {% if x.ram_usage is None %}
+                                <a>ram_usage missing</a>
+                            {% else %}
+                                <a>{{ x.ram_usage }} MB</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="server-bot">
+                        <div class="shownStatForDate box_for_server">
+                            <a>Date</a>
+                            {% if x.date is None %}
+                                <a>date missing</a>
+                            {% else %}
+                                <a>{{ x.date }}</a>
+                            {% endif %}
+                        </div>
 
-                    <div class="shownStatForCpu">
-                        {% if x.cpu_usage is None %}
-                            cpu_usage missing
-                        {% else %}
-                            {{ x.cpu_usage }}
-                        {% endif %}
-                    </div>
-                    <div class="shownStatForRam">
-                        {% if x.ram_usage is None %}
-                            ram_usage missing<br>
-                        {% else %}
-                            {{ x.ram_usage }}<br>
-                        {% endif %}
-                    </div>
-
-                    <div class="shownStatForDate">
-                        {% if x.date is None %}
-                            date missing<br>
-                        {% else %}
-                            {{ x.date }}<br>
-                        {% endif %}
-                    </div>
-
-                    <div class="shownStatForTime">
-                        {% if x.time is None %}
-                            time missing<br>
-                        {% else %}
-                            {{ x.time }}<br>
-                        {% endif %}
+                        <div class="shownStatForTime box_for_server">
+                            <a>Time</a>
+                            {% if x.time is None %}
+                                <a>time missing</a>
+                            {% else %}
+                                <a>{{ x.time }}</a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
 
             {% endfor %}
+        {% endif %}
         </div>
     </div>
 

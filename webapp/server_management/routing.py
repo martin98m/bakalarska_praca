@@ -1,7 +1,7 @@
-from django.urls import re_path
+from django.urls import re_path, path
 
 from server_management import consumer
 
 websocket_urlpatterns = [
-    re_path(r'ws/demo/(?P<room_name>\w+)/$', consumer.ChatConsumer),
+    path('server_call/<str:server_name>/ws/call', consumer.ChatConsumer)
 ]

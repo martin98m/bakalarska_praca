@@ -1,6 +1,5 @@
 import socket
 
-
 from server_management.SocketConnectionToServer.AESModule import AESModule
 
 
@@ -9,10 +8,14 @@ class ServerConnection:
         self.host = host
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.settimeout(1)
         self.connected = False
         self.crypt = AESModule()
 
     def connect(self):
+        if self.connected is True:
+            return
+
         try:
             # print(self.host, '|', self.port)
             self.sock.connect((self.host, self.port))
@@ -32,42 +35,48 @@ class ServerConnection:
     def is_connected(self):
         return self.connected
 
-    def send_msg(self, message):
+    def send_msg(self, message, is_command):
+        if not self.connected:
+            return
+
         enc_msg = self.crypt.encode_data(message)
+        command = self.crypt.encode_data(str(is_command))
+        self.sock.send(command)
         self.sock.send(enc_msg)
-        return 'changed'
 
-    def send_message_with_response(self, message):
+    def restart_communication(self):
+        self.send_msg(message="RELOAD", is_command=False)
+
+    def restart_data_gathering(self):
+        self.send_msg(message="RESTART", is_command=False)
+
+    def send_message_with_response(self, message, is_command):
+        if not self.connected:
+            return
 
         enc_msg = self.crypt.encode_data(message)
+        command = self.crypt.encode_data(str(is_command))
+
+        self.sock.send(command)
         self.sock.send(enc_msg)
 
         lines = []
-        print("X")
-        enc_msg = self.sock.recv(1024)
-        print(enc_msg)
-        dec_msg = self.crypt.decode_data(enc_msg)
-        print(dec_msg)
-        return dec_msg
+        try:
+            while True:
+                enc_msg = self.sock.recv(8192)
+                print(len(enc_msg))
+                # print(enc_msg)
 
-        # while True:
-        #     try:
-        #         read_num = self._read_num()
-        #     except socket.error:
-        #         SERVER HAS NOT SEND ANYTHING FOR 2sec
-                # break
-            # print(read_num)
-            # if read_num == -1:
-            #     return lines
-            # line = self.sock.recv(read_num + 2)
-            # print(line)
-            # try:
-            #     line = line.decode('utf-8')
-            # except UnicodeDecodeError:
-            #     return lines
-            # else:
-            #     line = line.replace('\r', '')
-                # line = line.replace('\n', '')
-                # lines.append(line)
-        #
-        # return lines
+                if len(enc_msg) == 0:
+                    break
+                try:
+                    dec_msg = self.crypt.decode_data(enc_msg)
+                    print(dec_msg)
+                    lines.append(dec_msg)
+                except ValueError:
+                    print("smth wrong")
+
+        except socket.timeout:
+            pass
+
+        return lines

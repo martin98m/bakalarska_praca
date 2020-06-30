@@ -13,15 +13,32 @@ body{
     font-size: 16px;
 }
 
-.grid-container{
-    display: grid;
-    grid-template-areas:
+@media only screen and (max-width: 800px) {
+     .grid-container{
+        display: grid;
+        grid-template-areas:
+                'header'
+                'control'
+                'console'
+                'confirm'
+                'commands'
+                'learn';
+        grid-template-columns: 100vw;
+        grid-template-rows: 60px 60px calc(100vh - 110px) 50px auto 50px;
+    }
+}
+@media only screen and (min-width: 801px) {
+    .grid-container {
+        display: grid;
+        grid-template-areas:
             'control header'
             'console commands'
             'confirm learn';
-    grid-template-columns: 60vw auto;
-    grid-template-rows: 60px calc(100vh - 110px) 50px;
+        grid-template-columns: 60vw auto;
+        grid-template-rows: 60px calc(100vh - 110px) 50px;
+    }
 }
+
 /*CONTROL*/
 .control{
     grid-area: control;
@@ -46,6 +63,10 @@ body{
 
     font-size: 20px;
 }
+.controlName::selection {
+  background: none;
+}
+
 .controlName > a{
     border-radius: 25px;
 
@@ -61,6 +82,10 @@ body{
     align-items: center;
 
     padding-right: 5px;
+}
+.server_call_connection{
+    display: flex;
+
 }
 /*END OF CONTROL*/
 /*HEADER*/
@@ -86,6 +111,13 @@ body{
     border-bottom:2px solid white ;
     /*height: calc(100vh - 150px);*/
     overflow: auto;
+}
+.console > .loader{
+    position: relative;
+    top: calc(50% - 30px);
+    left:calc(50% - 30px);
+    /*right:0;*/
+    /*bottom:0;*/
 }
 /*END CONSOLE*/
 /*COMMANDS*/
@@ -238,4 +270,26 @@ form{
 .learnSend:focus{
     background-color: #138a07;
     border-color: #0e6305;
+}
+
+.loader {
+  border: 14px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 14px solid #138a07;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: spin 2.5s linear infinite; /* Safari */
+  animation: spin 2.5s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.button_disconnect_hover:hover{
+    background-color: red;
+}
+
+.button_connect_hover:hover{
+    background-color: green;
 }

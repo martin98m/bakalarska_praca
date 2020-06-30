@@ -1,7 +1,7 @@
 package socket;
 
 import MainLogic.MainLogic;
-import cmd.CmdRunner;
+import cmd.Console;
 import cmd.GatherSystemInformation;
 import database.Database;
 
@@ -12,12 +12,12 @@ import java.net.SocketException;
 
 public class SocketConnectionServer {
 
-    private AES aes;
+    private static AES aes;
 
     public void startSocketServer() {
-        this.aes = new AES();
-
+        aes = new AES();
         ServerSocket server;
+
         try {
             //creates new socket- par 0 means it will get any port that is available
             server = new ServerSocket(5556);
@@ -39,43 +39,80 @@ public class SocketConnectionServer {
     private void handleConnection(Socket clientSocket){
         try {
             BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
+//            BufferedReader bis = new BufferedReader(new
+//                    InputStreamReader(clientSocket.getInputStream()));
+
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            Console console = new Console(out);
+            console.start();
 
             try {
                 while (clientSocket.isConnected()) {
+
+                    String is_command = receive_message(in);
                     String dec_msg = receive_message(in);
 
-                    System.out.println(dec_msg);
-                    send_message(dec_msg + "!", out);
-                    if (dec_msg.equals("RESTART")){
-                        MainLogic.data_gathering.interrupt();
-                        MainLogic.data_gathering.start();
+                    System.out.println(console);
+
+                    if (is_command.equals("False")){
+
+                        switch (dec_msg) {
+                            case "RESTART": {
+                                MainLogic.data_gathering.interrupt();
+                                //MainLogic.data_gathering.start();
+                                //send_message(dec_msg + "!", out);
+                                break;
+                            }
+                            case "RELOAD": {
+//                                console.stop();
+//                                console = new Console(out);
+                                console.stop();
+                                console.start();
+                                System.out.println("NEW CONSOLE");
+                                //cmd = new CmdRunner(null, out, "x");
+                                //send_message(dec_msg + "!", out);
+                                break;
+                            }
+                        }
+
+                    }else {
+                        console.executeCommand(dec_msg);
                     }
                 }
             }catch (SocketException e){
-                System.out.println("Socked ded");
+                System.out.println("Socked died");
                 e.printStackTrace();
                 System.exit(0);
             }
         } catch (IOException e) {
             e.printStackTrace();
         };
-
     }
 
-    public void send_message(String message, PrintWriter out){
+    public static void send_message(String message, PrintWriter out){
         String enc_msg = aes.encrypt(message);
-        System.out.println("S: " + enc_msg);
+        System.out.println("Sending: " + message);
         out.print(enc_msg);
         out.flush();
     }
 
+    private boolean command = true;
+
     public String receive_message(BufferedInputStream in) throws IOException{
         byte[] bytes = new byte[1024];
-        int result = in.read(bytes);
+        int result = 0;
+
+        if (command)
+             result = in.read(bytes,0, 24);
+        else
+            result = in.read(bytes);
+
+        command = !command;
+        System.out.println("Rec:" + result);
         String enc_msg = new String(bytes).substring(0,result);
 
-        return this.aes.decrypt(enc_msg);
+        return aes.decrypt(enc_msg);
     }
 /*
     //TODO currently reads messages sent from Python client

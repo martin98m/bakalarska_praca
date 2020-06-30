@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{ server_name }}</title>
 
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static "/server_management/global_styles.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "/server_management/server_call_style.css" %}">
-{#    <script src="{% static "/server_management/server_call.js" %}"></script>#}
 
 </head>
 <body>
@@ -19,15 +18,20 @@
         </div>
 
         <div class="controlContent">
-            <a class="buttonMain">clear</a>
-            <a class="buttonMain">restart</a>
-            <a class="buttonMain buttonMainBig" onclick="disconnectSocket()">disconnect</a>
-            {% if connection  == True %}
+            <a class="buttonMain" onclick="clearConsole()">
+                clear
+            </a>
+            <a class="buttonMain" onclick="restartConnection()">
+                restart
+            </a>
+            <div id="server_call_connection_connected" class="server_call_connection" style="display: none">
+                <a class="buttonMain buttonMainBig button_disconnect_hover" onclick="disconnectFromServer()">disconnect</a>
                 <div class="indicator connected" title="Connected to {{ server_name }}"></div>
-            {% else %}
+            </div>
+            <div id="server_call_connection_disconnected" class="server_call_connection" hidden="false">
+                <a class="buttonMain buttonMainBig button_connect_hover" onclick="connectToServer()">Connect</a>
                 <div class="indicator disconnected" title="Not connected to {{ server_name }}"></div>
-            {% endif %}
-
+            </div>
         </div>
     </div>
 
@@ -39,7 +43,8 @@
         </div>
     </div>
     <div class="console">
-        <pre id="scroll" >{% for a in cmd_history %}{{ a }}{% endfor %}</pre>
+        <div id="loading_animation" class="loader"  style="display: none"></div>
+        <pre id="scroll"></pre>
     </div>
 
     <div class="commands">
@@ -97,13 +102,10 @@
     </div>
 
     <div class="confirm">
-        <form id="send_command" method="post">
-            {% csrf_token %}
             <div class="inputContainerA">
-                <input class="inputCommand" name="command" id="inputCommand"/>
-                <button class="inputCommandSend" type="submit">Send</button>
+                <input class="inputCommand" name="command" id="server_cmd_input"/>
+                <input id="server_cmd_submit" class="inputCommandSend" type="button" value="Send">
             </div>
-        </form>
     </div>
 
     <div class="learn">
@@ -129,23 +131,10 @@
     </div>
 </div>
 
-{#    <button onclick="what()">DISCARD SOCKET</button>#}
-
-<script src="{% static "server_management/server_call.js" %}"></script>
-
 <script>
-         function  disconnectSocket() {
-             let request = new XMLHttpRequest();
-
-             request.open("POST", "",true);
-             request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-             request.send();
-
-             return "Write smthing";
-         }
-
-    </script>
-
+    const serverName = "{{ server_name }}";
+</script>
+<script src="{% static "server_management/server_call.js" %}"></script>
 
 </body>
 </html>

@@ -1,55 +1,51 @@
 # Create your views here.
-import ast
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.views import generic
+from django.shortcuts import render
 
 from server_management.SocketConnectionToServer.SocketManager import SocketManager
-from server_management.forms import CommandForm, CommandSave
-from .models import ServerInfo, ServerData, UserCommands
+from .models import ServerInfo, ServerData
 
 login_url = '/accounts/login'
-# sm = SocketManager()
 
 
-def index(request):
-    return render(request, 'server_management/channel_demo.html')
+# def index(request):
+#     return render(request, 'server_management/channel_demo.html')
 
-def room(request, room_name):
-    return render(request, 'server_management/room.html', {
-        'room_name': room_name
-    })
 
-class ServerInfoView(generic.ListView):
-    template_name = 'server_management/server_list_with_info.html'
-    context_object_name = 'data_from_db'
-
-    # model = ServerInfo.objects.all()
-    # queryset = ServerInfo.objects.all()
-    # ServerView.model | ServerView.queryset | def get_queryset(self)
-    # are for getting data from database if needed to use on this view
-
-    def get_queryset(self):
-        return ServerInfo.objects.all().order_by('server_name')
+# def room(request, room_name):
+#     return render(request, 'server_management/room.html', {
+#         'room_name': room_name
+#     })
 
 
 @login_required(login_url=login_url)
 def data_view(request, server_name):
     template_name = 'server_management/server_data.html'
 
-    context_server_data = 'server_data'
-    context_server_info = 'server_info'
     s_data = ServerData.objects.all().filter(server_name=server_name)
     s_info = ServerInfo.objects.all().filter(server_name=server_name)
-    print(s_data)
-    print(s_info)
 
-    return render(request, template_name, {context_server_data: s_data, context_server_info: s_info})
+    fill = {
+        'server_data': s_data,
+        'server_info': s_info
+    }
+    return render(request, template_name, fill)
 
 
-# todo get cookie with username/password/id
+@login_required(login_url=login_url)
+def server_call(request, server_name):
+    template_name = 'server_management/server_call.html'
 
+    fill = {
+        'server_name': server_name
+    }
+
+    response = render(request, template_name, fill)
+    return response
+
+
+"""
 @login_required(login_url=login_url)
 def server_call(request, server_name):
 
@@ -160,23 +156,14 @@ def server_call(request, server_name):
         response.set_cookie('used_commands', cookie_string)
 
     return response
+"""
 
 
 @login_required(login_url=login_url)
 def main_menu(request):
     template_name = 'server_management/main_menu.html'
 
-    context_server_info = 'server_info'
-    context_server_data_latest = 'server_data_latest'
-    context_server_conn = 'server_conn'
-
     s_info = ServerInfo.objects.values('server_name')
-
-    rest = SocketManager().get_connections_for(request.user.username)
-    res = []
-    if rest is not None:
-        for x in rest:
-            res.append(x)
 
     s_data_latest = ServerData.objects.raw(
         '''SELECT t.id, t.server_name_id, t.CPU_usage, t.RAM_usage, t.date, t.time 
@@ -197,5 +184,16 @@ WHERE server_name NOT in
         ) tm ON t.server_name_id = tm.server_name_id AND t.date+t.time = tm.MaxDate
     )''')
 
-    # print(s_data_latest)
-    return render(request, template_name, {context_server_info: s_info, context_server_data_latest: s_data_latest, context_server_conn: res})
+    rest = SocketManager().get_connections_for(request.user.username)
+    res = []
+    if rest is not None:
+        for x in rest:
+            res.append(x)
+
+    data = {
+        'server_info': s_info,
+        'server_data_latest': s_data_latest,
+        'server_conn': res
+    }
+
+    return render(request, template_name, data)

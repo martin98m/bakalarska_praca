@@ -19,7 +19,7 @@ public class Database {
     private static final String server_exists = "SELECT * FROM server_management_serverinfo WHERE server_name = ?";
     private static final String server_data_delay = "SELECT data_collection_delay_minutes FROM server_management_serverinfo WHERE server_name = ?";
     private static final String update_ip = "UPDATE server_management_serverinfo SET server_ip = ? WHERE server_name = ?";
-    private static final String server_data = "INSERT INTO server_management_serverdata(server_name, cpu_usage, ram_usage, ram_capacity, date, time) VALUES (?,?,?,?,?,?)";
+    private static final String server_data = "INSERT INTO server_management_serverdata(server_name_id, cpu_usage, ram_usage, ram_capacity, date, time) VALUES (?,?,?,?,?,?)";
     private static final String server_info = "INSERT INTO server_management_serverinfo(server_name, server_alias, server_os, server_ip, server_port, data_collection_delay_minutes) VALUES(?,?,?,?,?,?);";
     private static final String server_port = "UPDATE server_management_serverinfo SET server_port = ? WHERE server_name = ?";
 

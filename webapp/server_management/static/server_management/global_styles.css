@@ -19,6 +19,20 @@ body{
 
     text-decoration: none;
 }
+.buttonMainLong{
+    width: 180px;
+    height: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-right: 15px;
+    border: 1px solid white;
+    border-radius: 25px;
+
+    text-decoration: none;
+}
 
 .buttonMainBig {
     width: 110px;
@@ -33,6 +47,13 @@ body{
 
     cursor: pointer;
 }
+.buttonMainLong:hover{
+    background-color: #138a07;
+    border: 1px solid #138a07;
+
+    cursor: pointer;
+}
+
 .buttonMain::selection {
   background: none;
 }

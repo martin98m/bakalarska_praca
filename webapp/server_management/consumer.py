@@ -3,16 +3,15 @@ import json
 from channels.generic.websocket import WebsocketConsumer
 
 from server_management.SocketConnectionToServer.SocketManager import SocketManager
-from server_management.models import ServerInfo
+from server_management.models import ServerInfo, UserCommands
+
+import django.contrib.auth.models as user_model
+
 
 sm = SocketManager()
 
 
-class ChatConsumer(WebsocketConsumer):
-
-    def get_server_info(self, server_name):
-        s_info = ServerInfo.objects.all().filter(server_name=server_name)
-        return s_info
+class ServerController(WebsocketConsumer):
 
     def connect(self):
         self.user = self.scope["user"]
@@ -26,10 +25,10 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        s_info = self.get_server_info(text_data_json['server'])
+        s_info = ServerInfo.objects.all().filter(server_name=text_data_json['server'])
+        info = text_data_json['info']
 
         try:
-            info = text_data_json['info']
             if info == "CONNECT":
                 soc = None
                 try:
@@ -44,17 +43,18 @@ class ChatConsumer(WebsocketConsumer):
                         user_name=self.user,
                         server_name=s_info[0].server_name
                     )
-                    print("Socket already in use")
 
                 soc.connect()
 
                 if soc.is_connected():
+                    print("CONNECT SUCC")
                     self.send(text_data=json.dumps(
-                        {'info': 'True'}
+                        {'connected': 'True'}
                     ))
                 else:
+                    print("CONNECT FAIL")
                     self.send(text_data=json.dumps(
-                        {'info': 'False'}
+                        {'connected': 'False'}
                     ))
             elif info == "DISCONNECT":
                 soc = sm.remove_socket(
@@ -66,38 +66,60 @@ class ChatConsumer(WebsocketConsumer):
                         server_name=s_info[0].server_name
                 ) is None:
                     self.send(text_data=json.dumps(
-                        {'info': 'DISCONNECTED'}
+                        {'connected': 'DISCONNECTED'}
                     ))
             elif info == "RESTART":
                 soc = sm.get_socket(
                     user_name=str(self.user),
                     server_name=str(s_info[0].server_name)
                 )
-                print(soc)
-                print("XXX")
-                print(soc)
                 soc.restart_communication()
                 self.send(text_data=json.dumps(
-                    {'info': 'RESTARTED'}
+                    {'connected': 'RESTARTED'}
                 ))
+            elif info == "REFRESH":
+                soc = sm.get_socket(
+                    user_name=str(self.user),
+                    server_name=str(s_info[0].server_name)
+                )
+                soc.restart_data_gathering()
         except KeyError:
             pass
 
+
+class ServerCommunication(WebsocketConsumer):
+
+    def connect(self):
+        if self.scope["user"].is_authenticated:
+            self.accept()
+        else:
+            pass
+
+    def receive(self, text_data):
+
+        user_name = str(self.scope["user"])
+        text_data_json = json.loads(text_data)
+        s_info = ServerInfo.objects.all().filter(server_name=text_data_json['server'])
+
+        print(s_info)
+
         try:
             message = text_data_json['message']
-            # self.send(text_data=json.dumps(
-            #     {'response': message}
-            # ))
-            soc = sm.get_socket(str(self.user), s_info[0].server_name)
+            soc = sm.get_socket(user_name=user_name, server_name=s_info[0].server_name)
             if soc is None:
                 soc = soc = sm.add_socket(
-                    name=str(self.user),
+                    name=user_name,
                     server_name=text_data_json['server'],
                     host=s_info[0].server_ip,
                     port=s_info[0].server_port
                 )
             if not soc.is_connected():
                 soc.connect()
+
+            if soc.is_connected():
+                self.send(text_data=json.dumps(
+                    {'connected': 'True'}
+                ))
 
             msg_back = soc.send_message_with_response(message=message, is_command=True)
 
@@ -108,3 +130,31 @@ class ChatConsumer(WebsocketConsumer):
         except KeyError:
             pass
 
+
+class CommandConsumer(WebsocketConsumer):
+
+    def connect(self):
+        if self.scope["user"].is_authenticated:
+            self.accept()
+        else:
+            pass
+
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        print(text_data_json)
+
+        user = user_model.User.objects.get(username=str(self.scope["user"]))
+        print(user)
+
+        if text_data_json["info"] == "DELETE":
+            UserCommands.objects.filter(
+                username=user,
+                command=text_data_json["command"],
+                command_type=text_data_json["type"]).delete()
+        elif text_data_json["info"] == "ADD":
+
+            UserCommands.objects.create(
+                username=user,
+                command_type=text_data_json["type"],
+                command=text_data_json["command"]
+            )

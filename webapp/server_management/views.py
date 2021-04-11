@@ -4,26 +4,16 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from server_management.SocketConnectionToServer.SocketManager import SocketManager
-from .models import ServerInfo, ServerData
+from .models import ServerInfo, ServerData, UserCommands
 
 login_url = '/accounts/login'
-
-
-# def index(request):
-#     return render(request, 'server_management/channel_demo.html')
-
-
-# def room(request, room_name):
-#     return render(request, 'server_management/room.html', {
-#         'room_name': room_name
-#     })
 
 
 @login_required(login_url=login_url)
 def data_view(request, server_name):
     template_name = 'server_management/server_data.html'
 
-    s_data = ServerData.objects.all().filter(server_name=server_name)
+    s_data = ServerData.objects.all().filter(server_name=server_name).order_by("date", "time")
     s_info = ServerInfo.objects.all().filter(server_name=server_name)
 
     fill = {
@@ -37,8 +27,16 @@ def data_view(request, server_name):
 def server_call(request, server_name):
     template_name = 'server_management/server_call.html'
 
+    global_commands = UserCommands.objects.all().filter(command_type='global')
+    user_commands = UserCommands.objects.all().filter(username_id=1, command_type='user')
+
+    print("G", global_commands)
+    print("U", user_commands)
+
     fill = {
-        'server_name': server_name
+        'server_name': server_name,
+        'global_commands': global_commands,
+        'user_commands': user_commands
     }
 
     response = render(request, template_name, fill)

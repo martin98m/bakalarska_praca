@@ -21,6 +21,9 @@
             <a class="buttonMain" onclick="clearConsole()">
                 clear
             </a>
+            <a class="buttonMainLong" onclick="refreshDataGathering()">
+                refresh data gathering
+            </a>
             <a class="buttonMain" onclick="restartConnection()">
                 restart
             </a>
@@ -42,12 +45,56 @@
             <a class="logout" href="{% url 'server_management:logout_url' %}">Odhlasit</a>
         </div>
     </div>
+
     <div class="console">
+        <pre id="scroll" class="console_console"></pre>
         <div id="loading_animation" class="loader"  style="display: none"></div>
-        <pre id="scroll"></pre>
     </div>
 
-    <div class="commands">
+    <div class="commands_2">
+        <div class="commands_head">
+            <div class="commands_head_item" id="commands_head_global">global</div>
+            <div class="commands_head_item" id="commands_head_user">user</div>
+            <div class="commands_head_item" id="commands_head_recent">recent</div>
+        </div>
+        <div id="commands_body_global" class="commands_body">
+            {% for command in global_commands %}
+                <div class="commands_command_row">
+                    <div class="commands_body_command">{{ command.command }}</div>
+                    <div class="commands_body_clear">
+                        <a>clear</a>
+                        <a style="display: none;">global</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="commands_body_user" class="commands_body" style="display: none">
+            {% for command in user_commands %}
+                <div class="commands_command_row">
+                    <div class="commands_body_command">{{ command.command }}</div>
+                    <div class="commands_body_clear">
+                        <a>clear</a>
+                        <a style="display: none;">user</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="commands_body_recent" class="commands_body" style="display: none">
+            {% for command in global_commands %}
+                <div class="commands_command_row">
+                    <div class="commands_body_command">{{ command.command }}</div>
+                    <div class="commands_body_clear">
+                        <a>clear</a>
+                        <a style="display: none;">recent</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="commands" style="display: none">
         <table id="tableGlobal">
             <tr>
                 <th class="selected_col" onclick="showTable('Global')">global</th>
@@ -88,12 +135,12 @@
                 <th onclick="showTable('User')">user</th>
                 <th class="selected_col" onclick="showTable('Used')">used</th>
             </tr>
-            {% for com in used_commands reversed %}
+            {% for command in used_commands reversed %}
                 <tr>
                     <td colspan="3">
                         <div class="obal">
-                            <a class="commandSendToInput">{{ com }}</a>
-                            <a class="deleteRow" onclick="deleteRow(this)">X</a>
+                            <a class="commandSendToInput">{{ command }}</a>
+                            <a class="deleteRow" onclick="deleteRow(this)">clear</a>
                         </div>
                     </td>
                 </tr>
@@ -109,26 +156,24 @@
     </div>
 
     <div class="learn">
-        <form id="learn_command" method="post">
-            {% csrf_token %}
-            <div class="learn_container">
-                <input name="commandSave" class="learnInput">
+        <div class="learn_container">
+            <input id="command_save_command" name="commandSave" class="learnInput">
 
-                <div class="learnLabel">
-                    <div>
-                        <input  type="radio" id="target1" name="target" value="global">
-                        <label for="target1">Global</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="target2" name="target" value="user" checked>
-                        <label for="target2">User</label>
-                    </div>
+            <div class="learnLabel">
+                <div>
+                    <input  type="radio" id="target1" name="target" value="global">
+                    <label for="target1">Global</label>
                 </div>
-
-                <button class="learnSend" type="submit">Save Command</button>
+                <div>
+                    <input type="radio" id="target2" name="target" value="user" checked>
+                    <label for="target2">User</label>
+                </div>
             </div>
-        </form>
+
+            <input id="command_save" class="learnSend" type="submit" value="Save Command">
+        </div>
     </div>
+
 </div>
 
 <script>

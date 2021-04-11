@@ -45,7 +45,7 @@ public class SocketConnectionServer {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
             Console console = new Console(out);
-            console.start();
+            console.startConsole();
 
             try {
                 while (clientSocket.isConnected()) {
@@ -60,18 +60,12 @@ public class SocketConnectionServer {
                         switch (dec_msg) {
                             case "RESTART": {
                                 MainLogic.data_gathering.interrupt();
-                                //MainLogic.data_gathering.start();
-                                //send_message(dec_msg + "!", out);
                                 break;
                             }
                             case "RELOAD": {
-//                                console.stop();
-//                                console = new Console(out);
                                 console.stop();
-                                console.start();
+                                console.startConsole();
                                 System.out.println("NEW CONSOLE");
-                                //cmd = new CmdRunner(null, out, "x");
-                                //send_message(dec_msg + "!", out);
                                 break;
                             }
                         }
@@ -83,7 +77,7 @@ public class SocketConnectionServer {
             }catch (SocketException e){
                 System.out.println("Socked died");
                 e.printStackTrace();
-                System.exit(0);
+//                System.exit(0);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -92,7 +86,8 @@ public class SocketConnectionServer {
 
     public static void send_message(String message, PrintWriter out){
         String enc_msg = aes.encrypt(message);
-        System.out.println("Sending: " + message);
+//        System.out.println("Sending: " + message);
+//        System.out.println(enc_msg.length());
         out.print(enc_msg);
         out.flush();
     }

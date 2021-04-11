@@ -8,7 +8,7 @@ class ServerConnection:
         self.host = host
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(1)
+        self.sock.settimeout(5)
         self.connected = False
         self.crypt = AESModule()
 
@@ -64,7 +64,7 @@ class ServerConnection:
         try:
             while True:
                 enc_msg = self.sock.recv(8192)
-                print(len(enc_msg))
+                # print(len(enc_msg))
                 # print(enc_msg)
 
                 if len(enc_msg) == 0:
@@ -72,6 +72,7 @@ class ServerConnection:
                 try:
                     dec_msg = self.crypt.decode_data(enc_msg)
                     print(dec_msg)
+
                     lines.append(dec_msg)
                 except ValueError:
                     print("smth wrong")
@@ -80,3 +81,31 @@ class ServerConnection:
             pass
 
         return lines
+
+    def send_message_new(self, message, is_command):
+        if not self.connected:
+            return
+
+        enc_msg = self.crypt.encode_data(message)
+        command = self.crypt.encode_data(str(is_command))
+        self.sock.send(command)
+        self.sock.send(enc_msg)
+
+    def receive_message_new(self):
+        lines = []
+
+        try:
+            enc_msg = self.sock.recv(8192)
+
+            if len(enc_msg) == 0:
+                return lines
+
+            dec_msg = self.crypt.decode_data(enc_msg)
+            print(dec_msg)
+            lines.append(dec_msg)
+
+        except socket.timeout:
+            raise socket.timeout
+
+        return lines
+

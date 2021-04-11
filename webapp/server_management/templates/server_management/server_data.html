@@ -91,6 +91,10 @@
     let data_ram = [ {% for date in server_data %} "{{ date.ram_usage }}", {% endfor %} ];
     let encodedUri;
 
+    console.log(labels);
+    console.log(data_cpu);
+    console.log(data_ram);
+
     let chart = new Chart(ctx, {
     // The type of chart we want to create
     type: 'line',

@@ -20,6 +20,7 @@ def data_view(request, server_name):
         'server_data': s_data,
         'server_info': s_info
     }
+    print(s_info[0])
     return render(request, template_name, fill)
 
 
@@ -27,16 +28,19 @@ def data_view(request, server_name):
 def server_call(request, server_name):
     template_name = 'server_management/server_call.html'
 
+    print(request.user)
+    # user_id =
     global_commands = UserCommands.objects.all().filter(command_type='global')
-    user_commands = UserCommands.objects.all().filter(username_id=1, command_type='user')
+    user_commands = UserCommands.objects.all().filter(username_id=request.user.id, command_type='user')
+    last_online = ServerData.objects.all().filter(server_name=server_name).order_by("date","time").reverse()[0]
 
-    print("G", global_commands)
-    print("U", user_commands)
+    print("U", last_online)
 
     fill = {
         'server_name': server_name,
         'global_commands': global_commands,
-        'user_commands': user_commands
+        'user_commands': user_commands,
+        'last_online': last_online
     }
 
     response = render(request, template_name, fill)

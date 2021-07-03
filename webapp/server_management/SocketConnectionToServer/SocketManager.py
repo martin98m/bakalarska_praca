@@ -33,6 +33,7 @@ class SocketManager:
     def add_socket(self, name, server_name, host, port):
         socket = self.get_socket(name, server_name)
         if socket is None:
+            print(server_name,port, host)
             socket = ServerConnection(host, port)
             self.instance.list_of_connections.update({name: {server_name: socket}})
         else:

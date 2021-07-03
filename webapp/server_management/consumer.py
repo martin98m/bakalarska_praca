@@ -25,9 +25,11 @@ class ServerController(WebsocketConsumer):
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
+        print(text_data_json['server'])
         s_info = ServerInfo.objects.all().filter(server_name=text_data_json['server'])
         info = text_data_json['info']
-
+        print("works here")
+        print(s_info)
         try:
             if info == "CONNECT":
                 soc = None
@@ -156,5 +158,6 @@ class CommandConsumer(WebsocketConsumer):
             UserCommands.objects.create(
                 username=user,
                 command_type=text_data_json["type"],
-                command=text_data_json["command"]
+                command=text_data_json["command"],
+                description=text_data_json["description"]
             )

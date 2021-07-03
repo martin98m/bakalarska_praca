@@ -20,7 +20,7 @@ public class SocketConnectionServer {
 
         try {
             //creates new socket- par 0 means it will get any port that is available
-            server = new ServerSocket(5556);
+            server = new ServerSocket(0);
             int port = server.getLocalPort();
             new Database().updateServerPort(new GatherSystemInformation().getServerName(), port);
 

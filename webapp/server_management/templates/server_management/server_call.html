@@ -10,7 +10,7 @@
 
 </head>
 <body>
-<div class="grid-container">
+<div class="grid-container" id="server-call-grid">
 
     <div class="control">
         <div class="controlName">
@@ -19,11 +19,11 @@
 
         <div class="controlContent">
             <a class="buttonMain" onclick="clearConsole()">
-                clear
+                vyčisti
             </a>
-            <a class="buttonMainLong" onclick="refreshDataGathering()">
-                refresh data gathering
-            </a>
+{#            <a class="buttonMainLong" onclick="refreshDataGathering()">#}
+{#                refresh data gathering#}
+{#            </a>#}
             <a class="buttonMain" onclick="restartConnection()">
                 restart
             </a>
@@ -32,8 +32,8 @@
                 <div class="indicator connected" title="Connected to {{ server_name }}"></div>
             </div>
             <div id="server_call_connection_disconnected" class="server_call_connection" hidden="false">
-                <a class="buttonMain buttonMainBig button_connect_hover" onclick="connectToServer()">Connect</a>
-                <div class="indicator disconnected" title="Not connected to {{ server_name }}"></div>
+                <a class="buttonMain buttonMainBig button_connect_hover" onclick="connectToServer()">pripojiť</a>
+                <div class="indicator disconnected" title="Last online {{ last_online.date }} {{ last_online.time }}"></div>
             </div>
         </div>
     </div>
@@ -41,8 +41,8 @@
     <div class="header">
         <div class="headerContent">
             <a class="buttonMain buttonMainBig" href="{% url 'server_management:server_data_url' server_name  %}">{{ server_name }}</a>
-            <a class="buttonMain buttonMainBig" href="{% url 'server_management:main_menu_url' %}">Hlavne menu</a>
-            <a class="logout" href="{% url 'server_management:logout_url' %}">Odhlasit</a>
+            <a class="buttonMain buttonMainBig" href="{% url 'server_management:main_menu_url' %}">Hlavná ponuka</a>
+            <a class="logout" href="{% url 'server_management:logout_url' %}">Odhlásiť</a>
         </div>
     </div>
 
@@ -51,18 +51,18 @@
         <div id="loading_animation" class="loader"  style="display: none"></div>
     </div>
 
-    <div class="commands_2">
+    <div class="commands_2" id="command_list">
         <div class="commands_head">
-            <div class="commands_head_item" id="commands_head_global">global</div>
+            <div class="commands_head_item buttonDataSelected" id="commands_head_global">global</div>
             <div class="commands_head_item" id="commands_head_user">user</div>
             <div class="commands_head_item" id="commands_head_recent">recent</div>
         </div>
         <div id="commands_body_global" class="commands_body">
             {% for command in global_commands %}
                 <div class="commands_command_row">
-                    <div class="commands_body_command">{{ command.command }}</div>
+                    <div class="commands_body_command" title="{{ command.description }}">{{ command.command }}</div>
                     <div class="commands_body_clear">
-                        <a>clear</a>
+                        <a>zmaž</a>
                         <a style="display: none;">global</a>
                     </div>
                 </div>
@@ -72,9 +72,9 @@
         <div id="commands_body_user" class="commands_body" style="display: none">
             {% for command in user_commands %}
                 <div class="commands_command_row">
-                    <div class="commands_body_command">{{ command.command }}</div>
+                    <div class="commands_body_command" title="{{ command.description }}">{{ command.command }}</div>
                     <div class="commands_body_clear">
-                        <a>clear</a>
+                        <a>zmaž</a>
                         <a style="display: none;">user</a>
                     </div>
                 </div>
@@ -82,15 +82,7 @@
         </div>
 
         <div id="commands_body_recent" class="commands_body" style="display: none">
-            {% for command in global_commands %}
-                <div class="commands_command_row">
-                    <div class="commands_body_command">{{ command.command }}</div>
-                    <div class="commands_body_clear">
-                        <a>clear</a>
-                        <a style="display: none;">recent</a>
-                    </div>
-                </div>
-            {% endfor %}
+
         </div>
     </div>
 
@@ -151,15 +143,33 @@
     <div class="confirm">
             <div class="inputContainerA">
                 <input class="inputCommand" name="command" id="server_cmd_input"/>
-                <input id="server_cmd_submit" class="inputCommandSend" type="button" value="Send">
+                <input id="server_cmd_submit" class="inputCommandSend" type="button" value="Pošli">
             </div>
     </div>
 
     <div class="learn">
-        <div class="learn_container">
-            <input id="command_save_command" name="commandSave" class="learnInput">
-
-            <div class="learnLabel">
+        <div class="learn_oppener" id="learn-command">
+            <a onclick="openCommandAdd()" class="buttonMain buttonMainLong">pridaj príkaz</a>
+            <a onclick="closeCommandAdd()" class="logout">zavrieť</a>
+        </div>
+        <div class="learn_container learn_hidden" id="learn-command-2">
+            <div class="learn_container_head">
+                <a onclick="openCommandAdd()" class="buttonMain buttonMainLong">pridaj príkaz</a>
+                <a onclick="closeCommandAdd()" class="logout">zavrieť</a>
+            </div>
+            <div class="learn_container_command">
+                <label for="command_save_command">
+                    command
+                </label>
+                <textarea id="command_save_command" name="commandSave" class="learnInput" rows="2"></textarea>
+            </div>
+            <div class="learn_container_description">
+                <label for="command_save_description">
+                    description
+                </label>
+                <textarea id="command_save_description" name="descriptionSave" class="learnInput" rows="5"></textarea>
+            </div>
+            <div class="learn_container_target">
                 <div>
                     <input  type="radio" id="target1" name="target" value="global">
                     <label for="target1">Global</label>
@@ -169,8 +179,9 @@
                     <label for="target2">User</label>
                 </div>
             </div>
-
-            <input id="command_save" class="learnSend" type="submit" value="Save Command">
+            <div class="learn_container_confirm">
+                <input id="command_save" class="learnSend" type="submit" value="Save Command">
+            </div>
         </div>
     </div>
 

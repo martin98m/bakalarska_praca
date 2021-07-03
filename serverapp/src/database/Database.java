@@ -10,11 +10,12 @@ import java.sql.*;
 public class Database {
 
 //    private static final String db_url = "jdbc:postgresql://balarama.db.elephantsql.com:5432/bcksfnyd";
-    private static final String db_url = "jdbc:postgresql://localhost:5432/bp_server_management";
-//    private static final String db_username = "bcksfnyd";
-    private static final String db_username = "postgres";
-//    private static final String db_password = "Hz5DGV-kLNqRVaEtU7R8PqPy_qwGZ9G1";
-    private static final String db_password = "postgres";
+    private static final String db_url = "jdbc:postgresql://tai.db.elephantsql.com/ypjqiede";
+//    private static final String db_url = "jdbc:postgresql://localhost:5432/bp_server_management";
+    private static final String db_username = "ypjqiede";
+//    private static final String db_username = "postgres";
+    private static final String db_password = "Lns8nJ1fx3WafeaCxSINXlvu78BIU39b";
+//    private static final String db_password = "postgres";
 
     private static final String server_exists = "SELECT * FROM server_management_serverinfo WHERE server_name = ?";
     private static final String server_data_delay = "SELECT data_collection_delay_minutes FROM server_management_serverinfo WHERE server_name = ?";

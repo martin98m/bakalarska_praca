@@ -18,7 +18,7 @@ class FirstRun {
 //            todo get OS info
             //server_port is added when socket is created, delay is 5 by default
             ServerInformation serverInformation =
-                    new ServerInformation(g.getServerName(),null,g.getSystemOs(),null, 0, 5);
+                    new ServerInformation(g.getServerName(),null,g.getSystemOs(),g.getServerIP(), 0, 5);
             db.sendServerInfoToDatabase(serverInformation);
         }
         //server was found in DB

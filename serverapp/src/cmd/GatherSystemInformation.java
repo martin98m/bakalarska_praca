@@ -1,5 +1,10 @@
 package cmd;
 
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
 public class GatherSystemInformation extends OsInfoGathering {
 
     public GatherSystemInformation(){
@@ -39,11 +44,15 @@ public class GatherSystemInformation extends OsInfoGathering {
 
         for (String line:cmd.getStdout()) {
             if(line.contains("Total Physical Memory")) {
-                line = line.replaceAll("[a-zA-Z,:]","").trim();
+                System.out.println(line);
+                line = line.replaceAll("[^0-9]","").trim();
+//                if (line.charAt(2) == 729)
+//                    line = line.replaceAll(String.valueOf(line.charAt(2)),"");
+                System.out.println("["+line+"]");
                 ram[0] = Integer.parseInt(line);
             }
             if(line.contains("Available Physical Memory")){
-                line = line.replaceAll("[a-zA-Z,:]","").trim();
+                line = line.replaceAll("[^0-9]","").trim();
                 ram[1] =  ram[0] - Integer.parseInt(line);
             }
         }
@@ -55,15 +64,25 @@ public class GatherSystemInformation extends OsInfoGathering {
         String ipconfig = "ipconfig";
         String serverIP = null;
 
+        /*try(final DatagramSocket socket = new DatagramSocket()){
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            serverIP = socket.getLocalAddress().getHostAddress();
+        } catch (SocketException | UnknownHostException e) {
+            e.printStackTrace();
+        }*/
+
         cmd.runCommand(ipconfig,false);
 
         //todo line.contains() may not work all the time
         for (String line : cmd.getStdout()) {
-            if(line.contains("IPv4 Address. . . . .")){
+            if(line.contains("192.168.0.")){
+//                if (line.contains("192.168.0.1")) break;
                 line = line.substring(line.lastIndexOf(':')+2);
                 serverIP = line;
+                break;
             }
         }
+        System.out.println(serverIP);
         return serverIP;
     }
 

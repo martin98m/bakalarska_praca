@@ -54,6 +54,10 @@ body{
     cursor: pointer;
 }
 
+.buttonDataSelected{
+    background-color: #138a07;
+}
+
 .buttonMain::selection {
   background: none;
 }

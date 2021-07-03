@@ -31,7 +31,7 @@ body{
 .grid-head-info{
     display: flex;
     justify-content: center;
-    align-content: center;
+    align-items: center;
 }
 .grid-head-info>table{
     width: 100%;
@@ -46,6 +46,12 @@ body{
     height: 100%;
 }
 
+.grid-footer{
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
 .grid-control{
     background-color: rgb(44, 54, 69);
 
@@ -53,8 +59,17 @@ body{
 
     justify-content: flex-start;
     align-items: center;
-
 }
+
+.grid-graphs{
+    background-color: rgb(44, 54, 69);
+
+    display: flex;
+
+    justify-content: flex-start;
+    align-items: center;
+}
+
 .grid-control>*{
     margin-left: 10px;
 }

@@ -13,7 +13,7 @@
 <div class="grid-container">
     <div class="page">
         <div class="pageName">
-            <a>Main Menu</a>
+            <a>Hlavná ponuka</a>
         </div>
     </div>
     <div class="header">
@@ -39,9 +39,9 @@
                 <div class="server" onclick="location.href='server_data/{{ x.server_name_id }}'">
                     <div class="server-head">
                         <div class="shownStatForServerName box_for_server">
-                            <a>Server Name:</a>
+                            <a>Názov servera:</a>
                             {% if x.server_name_id is None %}
-                                <a>data_missing</a>
+                                <a>chybaju dáta</a>
                             {% else %}
                                 <a>{{ x.server_name_id }}</a>
                             {% endif %}
@@ -67,7 +67,7 @@
                     </div>
                     <div class="server-bot">
                         <div class="shownStatForDate box_for_server">
-                            <a>Date</a>
+                            <a>Dátum</a>
                             {% if x.date is None %}
                                 <a>data_missing</a>
                             {% else %}
@@ -76,7 +76,7 @@
                         </div>
 
                         <div class="shownStatForTime box_for_server">
-                            <a>Time</a>
+                            <a>Čas</a>
                             {% if x.time is None %}
                                 <a>data_missing</a>
                             {% else %}
@@ -94,8 +94,8 @@
 
     <div class="side">
         <div class="sidebar">
-            <a class="sidebarContentA" onclick="sortByCpuLowHigh()">CPU_L_H</a>
-            <a class="sidebarContentA" onclick="sortByCpuHighLow()">CPU_H_L</a>
+{#            <a class="sidebarContentA" onclick="sortByCpuLowHigh()">CPU vzostupne</a>#}
+{#            <a class="sidebarContentA" onclick="sortByCpuHighLow()">CPU zostupne</a>#}
 
             <div class="sidebarContentB">
                 <a style="opacity: 0"></a>
@@ -117,7 +117,7 @@
 
             <div class="sidebarContentB" id="setTime">
                 <a style="opacity: 0"></a>
-                <a>TIME</a>
+                <a>ČAS</a>
                 <label class="switch">
                     <input type="checkbox" checked="true" name="checkbox3" onclick="updateShowedData('3','Time')">
                     <span class="slider round"></span>

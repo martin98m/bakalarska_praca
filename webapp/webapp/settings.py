@@ -25,7 +25,7 @@ SECRET_KEY = 'e-0m6%11zga07c)tm493^v!0!s@s5h(4n5cxt0i10-@@u#y!7v'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '192.168.0.152',
+    '192.168.0.150',
     '127.0.0.1',
     'localhost'
 ]
@@ -87,14 +87,14 @@ DATABASES = {
     #     'PASSWORD': 'Hz5DGV-kLNqRVaEtU7R8PqPy_qwGZ9G1',
     #     'HOST': 'balarama.db.elephantsql.com'
     # },
-
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bp_server_management',
-        'USER': 'django_app',
-        'PASSWORD': 'postgresql',
-        'host': ''
-    }
+    # toto v
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'bp_server_management',
+    #     'USER': 'django_app',
+    #     'PASSWORD': 'postgresql',
+    #     'host': ''
+    # }
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': 'server_usage',
@@ -102,13 +102,13 @@ DATABASES = {
     #     'PASSWORD': 'postgres',
     #     'HOST': ''
     # }
-    # 'elephant': {
-    #         'ENGINE': 'django.db.backends.postgresql',
-    #         'NAME': 'uummybji',
-    #         'USER': 'uummybji',
-    #         'PASSWORD': 'uiR5wvu84MUT5BApOsAkzPKJ4FgZvsNY',
-    #         'HOST': 'balarama.db.elephantsql.com'
-    #     }
+    'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'ypjqiede',
+            'USER': 'ypjqiede',
+            'PASSWORD': 'Lns8nJ1fx3WafeaCxSINXlvu78BIU39b',
+            'HOST': 'tai.db.elephantsql.com'
+        }
 }
 
 # Password validation

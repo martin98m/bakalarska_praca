@@ -23,6 +23,7 @@ class ServerData(models.Model):
 
 class UserCommands(models.Model):
     username = models.ForeignKey(user_model.get_user_model(), on_delete=models.CASCADE)
+    description = models.TextField(default=None)
     # command_type - command only for user or global
     command_type = models.CharField(max_length=255, default=None)
     # command that is saved

@@ -18,9 +18,11 @@
         <div class="grid-head-info">
             <table>
                 <tr>
-                    <th>Server name</th>
+                    <th>Názov servera</th>
+                    {% if server_info.0.server_nickname is not None%}
                     <th>server nick</th>
-                    <th>refresh rate</th>
+                    {% endif %}
+                    <th>Interval monitorovania</th>
                     <th>OS</th>
                     <th>Server IP</th>
                     <th>Server port</th>
@@ -34,18 +36,16 @@
 
                     {% if server_info.0.server_nickname is not None %}
                         <td>{{ server_info.0.server_nickname }}</td>
-                    {% else %}
-                        <td>null</td>
                     {% endif %}
 
                     {% if server_info.0.data_collection_delay_minutes is not None %}
-                        <td>{{ server_info.0.data_collection_delay_minutes }}</td>
+                        <td title="minutes">{{ server_info.0.data_collection_delay_minutes }}</td>
                     {% else %}
                         <td>null</td>
                     {% endif %}
 
-                    {% if server_info.0.os is not None %}
-                        <td>{{ server_info.0.os }}</td>
+                    {% if server_info.0.server_os is not None %}
+                        <td>{{ server_info.0.server_os }}</td>
                     {% else %}
                         <td>null</td>
                     {% endif %}
@@ -75,11 +75,17 @@
     <div class="grid-main">
         <canvas id="myChart"></canvas>
     </div>
-    <div class="grid-control">
-        <a onclick="removeData()" class="buttonMain buttonMainBig">DELETE</a>
-        <a onclick="updateData()" class="buttonMain buttonMainBig">REFRESH</a>
-        <a id="down_json" class="buttonMain buttonMainBig">JSON</a>
-        <a id="down_csv" class="buttonMain buttonMainBig">CSV</a>
+    <div class="grid-footer">
+        <div class="grid-control">
+{#            <a onclick="removeData()" class="buttonMain buttonMainBig">DELETE</a>#}
+{#            <a onclick="updateData()" class="buttonMain buttonMainBig">REFRESH</a>#}
+            <a id="down_json" class="buttonMain buttonMainBig">JSON</a>
+            <a id="down_csv" class="buttonMain buttonMainBig">CSV</a>
+        </div>
+        <div class="grid-graphs">
+            <a id="chart_cpu" class="buttonMain buttonMainBig buttonDataSelected" onclick="setChart(`cpu`)">CPU</a>
+            <a id="chart_ram" class="buttonMain buttonMainBig" onclick="setChart(`ram`)">RAM</a>
+        </div>
     </div>
 </div>
 
@@ -89,42 +95,105 @@
     let labels = [ {% for date in server_data %} "{{ date.time }}", {% endfor %} ];
     let data_cpu = [ {% for date in server_data %} "{{ date.cpu_usage }}", {% endfor %} ];
     let data_ram = [ {% for date in server_data %} "{{ date.ram_usage }}", {% endfor %} ];
+    let data_ram_capacity = [ {% for date in server_data %} "{{ date.ram_capacity }}", {% endfor %} ];
     let encodedUri;
 
     console.log(labels);
     console.log(data_cpu);
     console.log(data_ram);
+    console.log(data_ram_capacity);
 
-    let chart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: 'line',
-
-    // The data for our dataset
-    data: {
-        labels: [...labels],
-        datasets: [{
-            label: 'CPU',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: [...data_cpu],
-            hidden: true
+    let chart_ram = /*new Chart(ctx,*/{
+        type: "bar",
+        data:{
+            labels: [...labels],
+            datasets:[
+                {
+                    label: 'RAM',
+                    backgroundColor: 'rgb(30, 226, 30)',
+                    borderColor: 'rgb(30, 142, 30)',
+                    data: [...data_ram]
+                },
+                {
+                    label: 'RAM CAPACITY',
+                    backgroundColor: 'rgb(200, 150, 1)',
+                    borderColor: 'rgb(30, 142, 30)',
+                    data: [...data_ram_capacity]
+                }
+            ]
         },
-        {
-            label: 'RAM',
-            backgroundColor: 'rgb(30, 226, 30)',
-            borderColor: 'rgb(30, 142, 30)',
-            data: [...data_ram]
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales:{
+                xAxes:[{
+                   stacked: true
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
         }
-        ]
-    },
+    };
 
-    // Configuration options go here
-    options: {
-        responsive: true,
-        maintainAspectRatio: false
+    let chart_cpu = {
+    // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+            labels: [...labels],
+            datasets: [
+                {
+                    label: 'CPU',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: [...data_cpu],
+                    {#hidden: true#}
+                }
+                ]
+        },
+
+        // Configuration options go here
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales:{
+            yAxes: [{
+        ticks: {
+            min: 0,
+            max: 100,
+            {#stepSize: 20#}
+        }
+    }]}
+        }
+    };
+
+    let chart = new Chart(ctx, chart_cpu);
+    chart.update();
+
+    function setChart(type) {
+
+        let className = "buttonDataSelected";
+        if (type === "ram"){
+            console.log("X1");
+            chart.destroy();
+            chart = new Chart(ctx, chart_ram);
+            chart.update();
+            document.getElementById("chart_ram").classList.add(className)
+            document.getElementById("chart_cpu").classList.remove(className);
+        }
+        else{
+            console.log("X2");
+            chart.destroy();
+            chart = new Chart(ctx, chart_cpu);
+            chart.update();
+            document.getElementById("chart_cpu").classList.add(className);
+            document.getElementById("chart_ram").classList.remove(className);
+        }
     }
-});
-
     function removeData() {
         {#console.log(chart);#}
         chart.data.labels.pop();
@@ -147,19 +216,34 @@
     }
 
     function getDownloadJSON(){
+
+        console.log("{{ server_data.0.time|time:"H:i" }}");
+        {#console.log(new Date("{{ server_data.0.time }}"));#}
         let data = [
             {% for data in server_data %}
-                {Server_name: "{{ data.server_name }}", cpu: {{ data.cpu_usage }}, ram: {{ data.ram_usage }} },
+                {
+                    Server_name: "{{ data.server_name_id }}",
+                    cpu: {{ data.cpu_usage }},
+                    ram: {{ data.ram_usage }},
+                    ram_capacity: {{ data.ram_capacity }},
+                    date: "{{ data.date|date:"d-m-Y" }}",
+                    time: "{{ data.time|time:"H:i" }}",
+                },
             {% endfor %}
             ];
 
         let csv = [
             [
-                "Server_name", "CPU_usage", "RAM_usage"
+                "Server_name", "CPU_usage", "RAM_usage", "RAM_capacity", "date", "time"
             ],
             {% for data in server_data %}
                 [
-                    "{{ data.server_name }}", "{{ data.cpu_usage }}", "{{ data.ram_usage }}"
+                    "{{ data.server_name_id }}",
+                    "{{ data.cpu_usage }}",
+                    "{{ data.ram_usage }}",
+                    "{{ data.ram_capacity }}",
+                    "{{ data.date|date:"d-m-Y" }}",
+                    "{{ data.time|time:"H:i" }}"
                 ],
             {% endfor %}
         ];
@@ -175,7 +259,6 @@
 
             encodedUri = encodeURI(csvContent);
         });
-
         let dataO = "text/json;charset=utf-8,"+ encodeURIComponent(JSON.stringify(data));
         document.getElementById("down_json").setAttribute('href', "data:"+dataO);//download='data.json'";
         document.getElementById("down_json").setAttribute('download', "{{ server_info.0.server_name }}.json");//download='data.json'";

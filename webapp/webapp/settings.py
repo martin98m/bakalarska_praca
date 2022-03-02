@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'e-0m6%11zga07c)tm493^v!0!s@s5h(4n5cxt0i10-@@u#y!7v'
+SECRET_KEY = 'super_secret_key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -82,31 +82,31 @@ ASGI_APPLICATION = 'routing.application'
 DATABASES = {
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'bcksfnyd',
-    #     'USER': 'bcksfnyd',
-    #     'PASSWORD': 'Hz5DGV-kLNqRVaEtU7R8PqPy_qwGZ9G1',
+    #     'NAME': 'name',
+    #     'USER': 'user',
+    #     'PASSWORD': 'pass',
     #     'HOST': 'balarama.db.elephantsql.com'
     # },
     # toto v
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'bp_server_management',
-    #     'USER': 'django_app',
-    #     'PASSWORD': 'postgresql',
+    #     'NAME': 'name',
+    #     'USER': 'user',
+    #     'PASSWORD': 'pass',
     #     'host': ''
     # }
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'server_usage',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'postgres',
+    #     'NAME': 'name',
+    #     'USER': 'user',
+    #     'PASSWORD': 'pass',
     #     'HOST': ''
     # }
     'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'ypjqiede',
-            'USER': 'ypjqiede',
-            'PASSWORD': 'Lns8nJ1fx3WafeaCxSINXlvu78BIU39b',
+            'NAME': 'name',
+            'USER': 'user',
+            'PASSWORD': 'pass',
             'HOST': 'tai.db.elephantsql.com'
         }
 }
